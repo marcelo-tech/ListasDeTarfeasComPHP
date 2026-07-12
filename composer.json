@@ -1,0 +1,16 @@
+{
+    "name": "user-name/listas-de-tarefas",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "user-name",
+            "email": "user-name@email.com"
+        }
+    ],
+    "require": {}
+}
