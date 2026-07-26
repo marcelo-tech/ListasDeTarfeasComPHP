@@ -1,0 +1,1 @@
+{"version":2,"defects":{"Tests\\Unit\\ApplicationTest::initDeveRetornarHelloQuandoChamado":8,"Tests\\Unit\\ListRepositoryTest::shouldReturnPageWithNewTaskWhenSubmitted":7},"times":{"Tests\\Unit\\ApplicationTest::initDeveRetornarHelloQuandoChamado":0.002,"Tests\\Unit\\ListRepositoryTest::shouldReturnPageWithNewTaskWhenSubmitted":0.03}}

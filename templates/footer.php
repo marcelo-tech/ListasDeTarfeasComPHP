@@ -1,0 +1,1 @@
+<footer class="fixed-bottom bg-dark text-white-50">&copy; 2026 All Rights Reserved.</footer>

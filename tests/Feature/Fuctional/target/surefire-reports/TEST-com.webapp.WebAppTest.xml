@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.1" name="com.webapp.WebAppTest" time="5.07" tests="10" errors="10" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="21"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/home/marcelo/Projects/php-projects/ListasDeTarfeasComPHP/tests/Feature/Fuctional/target/test-classes:/home/marcelo/Projects/php-projects/ListasDeTarfeasComPHP/tests/Feature/Fuctional/target/classes:/home/marcelo/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.0/junit-jupiter-api-5.11.0.jar:/home/marcelo/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/marcelo/.m2/repository/org/junit/platform/junit-platform-commons/1.11.0/junit-platform-commons-1.11.0.jar:/home/marcelo/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/marcelo/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.11.0/junit-jupiter-params-5.11.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-java/4.44.0/selenium-java-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-api/4.44.0/selenium-api-4.44.0.jar:/home/marcelo/.m2/repository/org/jspecify/jspecify/1.0.0/jspecify-1.0.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-chrome-driver/4.44.0/selenium-chrome-driver-4.44.0.jar:/home/marcelo/.m2/repository/com/google/auto/service/auto-service-annotations/1.1.1/auto-service-annotations-1.1.1.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-chromium-driver/4.44.0/selenium-chromium-driver-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-json/4.44.0/selenium-json-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-manager/4.44.0/selenium-manager-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-devtools-v146/4.44.0/selenium-devtools-v146-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-devtools-v147/4.44.0/selenium-devtools-v147-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-devtools-v148/4.44.0/selenium-devtools-v148-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-edge-driver/4.44.0/selenium-edge-driver-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-firefox-driver/4.44.0/selenium-firefox-driver-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-http/4.44.0/selenium-http-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-ie-driver/4.44.0/selenium-ie-driver-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-remote-driver/4.44.0/selenium-remote-driver-4.44.0.jar:/home/marcelo/.m2/repository/com/google/guava/guava/33.6.0-jre/guava-33.6.0-jre.jar:/home/marcelo/.m2/repository/com/google/guava/failureaccess/1.0.3/failureaccess-1.0.3.jar:/home/marcelo/.m2/repository/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/home/marcelo/.m2/repository/com/google/errorprone/error_prone_annotations/2.47.0/error_prone_annotations-2.47.0.jar:/home/marcelo/.m2/repository/com/google/j2objc/j2objc-annotations/3.1/j2objc-annotations-3.1.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-api/1.62.0/opentelemetry-api-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-context/1.62.0/opentelemetry-context-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-common/1.62.0/opentelemetry-common-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-exporter-logging/1.62.0/opentelemetry-exporter-logging-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-sdk-common/1.62.0/opentelemetry-sdk-common-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-sdk-extension-autoconfigure-spi/1.62.0/opentelemetry-sdk-extension-autoconfigure-spi-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-sdk-extension-autoconfigure/1.62.0/opentelemetry-sdk-extension-autoconfigure-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-sdk-trace/1.62.0/opentelemetry-sdk-trace-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-sdk/1.62.0/opentelemetry-sdk-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-sdk-metrics/1.62.0/opentelemetry-sdk-metrics-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-sdk-logs/1.62.0/opentelemetry-sdk-logs-1.62.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-os/4.44.0/selenium-os-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-safari-driver/4.44.0/selenium-safari-driver-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-support/4.44.0/selenium-support-4.44.0.jar:/home/marcelo/.m2/repository/org/assertj/assertj-core/3.27.7/assertj-core-3.27.7.jar:/home/marcelo/.m2/repository/net/bytebuddy/byte-buddy/1.18.3/byte-buddy-1.18.3.jar:"/>
+    <property name="java.vm.vendor" value="Debian"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://tracker.debian.org/openjdk-21"/>
+    <property name="os.name" value="Linux"/>
+    <property name="java.vm.specification.version" value="21"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-21-openjdk-amd64/lib"/>
+    <property name="sun.java.command" value="/home/marcelo/Projects/php-projects/ListasDeTarfeasComPHP/tests/Feature/Fuctional/target/surefire/surefirebooter-20260725143701459_3.jar /home/marcelo/Projects/php-projects/ListasDeTarfeasComPHP/tests/Feature/Fuctional/target/surefire 2026-07-25T14-37-01_361-jvmRun1 surefire-20260725143701459_1tmp surefire_0-20260725143701459_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="/home/marcelo/Projects/php-projects/ListasDeTarfeasComPHP/tests/Feature/Fuctional/target/test-classes:/home/marcelo/Projects/php-projects/ListasDeTarfeasComPHP/tests/Feature/Fuctional/target/classes:/home/marcelo/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.0/junit-jupiter-api-5.11.0.jar:/home/marcelo/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/marcelo/.m2/repository/org/junit/platform/junit-platform-commons/1.11.0/junit-platform-commons-1.11.0.jar:/home/marcelo/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/marcelo/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.11.0/junit-jupiter-params-5.11.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-java/4.44.0/selenium-java-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-api/4.44.0/selenium-api-4.44.0.jar:/home/marcelo/.m2/repository/org/jspecify/jspecify/1.0.0/jspecify-1.0.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-chrome-driver/4.44.0/selenium-chrome-driver-4.44.0.jar:/home/marcelo/.m2/repository/com/google/auto/service/auto-service-annotations/1.1.1/auto-service-annotations-1.1.1.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-chromium-driver/4.44.0/selenium-chromium-driver-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-json/4.44.0/selenium-json-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-manager/4.44.0/selenium-manager-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-devtools-v146/4.44.0/selenium-devtools-v146-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-devtools-v147/4.44.0/selenium-devtools-v147-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-devtools-v148/4.44.0/selenium-devtools-v148-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-edge-driver/4.44.0/selenium-edge-driver-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-firefox-driver/4.44.0/selenium-firefox-driver-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-http/4.44.0/selenium-http-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-ie-driver/4.44.0/selenium-ie-driver-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-remote-driver/4.44.0/selenium-remote-driver-4.44.0.jar:/home/marcelo/.m2/repository/com/google/guava/guava/33.6.0-jre/guava-33.6.0-jre.jar:/home/marcelo/.m2/repository/com/google/guava/failureaccess/1.0.3/failureaccess-1.0.3.jar:/home/marcelo/.m2/repository/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/home/marcelo/.m2/repository/com/google/errorprone/error_prone_annotations/2.47.0/error_prone_annotations-2.47.0.jar:/home/marcelo/.m2/repository/com/google/j2objc/j2objc-annotations/3.1/j2objc-annotations-3.1.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-api/1.62.0/opentelemetry-api-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-context/1.62.0/opentelemetry-context-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-common/1.62.0/opentelemetry-common-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-exporter-logging/1.62.0/opentelemetry-exporter-logging-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-sdk-common/1.62.0/opentelemetry-sdk-common-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-sdk-extension-autoconfigure-spi/1.62.0/opentelemetry-sdk-extension-autoconfigure-spi-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-sdk-extension-autoconfigure/1.62.0/opentelemetry-sdk-extension-autoconfigure-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-sdk-trace/1.62.0/opentelemetry-sdk-trace-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-sdk/1.62.0/opentelemetry-sdk-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-sdk-metrics/1.62.0/opentelemetry-sdk-metrics-1.62.0.jar:/home/marcelo/.m2/repository/io/opentelemetry/opentelemetry-sdk-logs/1.62.0/opentelemetry-sdk-logs-1.62.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-os/4.44.0/selenium-os-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-safari-driver/4.44.0/selenium-safari-driver-4.44.0.jar:/home/marcelo/.m2/repository/org/seleniumhq/selenium/selenium-support/4.44.0/selenium-support-4.44.0.jar:/home/marcelo/.m2/repository/org/assertj/assertj-core/3.27.7/assertj-core-3.27.7.jar:/home/marcelo/.m2/repository/net/bytebuddy/byte-buddy/1.18.3/byte-buddy-1.18.3.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/home/marcelo"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2026-04-21"/>
+    <property name="java.home" value="/usr/lib/jvm/java-21-openjdk-amd64"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/home/marcelo/Projects/php-projects/ListasDeTarfeasComPHP/tests/Feature/Fuctional"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="surefire.real.class.path" value="/home/marcelo/Projects/php-projects/ListasDeTarfeasComPHP/tests/Feature/Fuctional/target/surefire/surefirebooter-20260725143701459_3.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="21.0.11+10-1-Debian"/>
+    <property name="user.name" value="marcelo"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="6.18.12+kali-amd64"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="localRepository" value="/home/marcelo/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://bugs.debian.org/openjdk-21"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="java.version" value="21.0.11"/>
+    <property name="user.dir" value="/home/marcelo/Projects/php-projects/ListasDeTarfeasComPHP/tests/Feature/Fuctional"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/java/packages/lib:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib"/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Debian"/>
+    <property name="java.vm.version" value="21.0.11+10-1-Debian"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="65.0"/>
+  </properties>
+  <testcase name="deveRegistrarUsuarioComSucesso" classname="com.webapp.WebAppTest" time="0.161">
+    <error message="Reached error page: about:neterror?e=connectionFailure&amp;u=http%3A//localhost%3A8000/users/delete/all&amp;c=UTF-8&amp;d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.&#10;Build info: version: &apos;4.44.0&apos;, revision: &apos;da2039b&apos;&#10;System info: os.name: &apos;Linux&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;6.18.12+kali-amd64&apos;, java.version: &apos;21.0.11&apos;&#10;Driver info: org.openqa.selenium.firefox.FirefoxDriver&#10;Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]&#10;Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}&#10;Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f" type="org.openqa.selenium.WebDriverException"><![CDATA[org.openqa.selenium.WebDriverException: 
+Reached error page: about:neterror?e=connectionFailure&u=http%3A//localhost%3A8000/users/delete/all&c=UTF-8&d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.
+Build info: version: '4.44.0', revision: 'da2039b'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.18.12+kali-amd64', java.version: '21.0.11'
+Driver info: org.openqa.selenium.firefox.FirefoxDriver
+Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]
+Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}
+Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f
+	at org.openqa.selenium.remote.ErrorCodec.decode(ErrorCodec.java:169)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:143)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:50)
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:224)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.invokeExecute(DriverCommandExecutor.java:217)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:175)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)
+	at org.openqa.selenium.remote.RemoteWebDriver.get(RemoteWebDriver.java:366)
+	at com.webapp.WebAppTest.init(WebAppTest.java:143)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></error>
+  </testcase>
+  <testcase name="deveRetornarMensagemIndicandoParaAceitarOsTermos" classname="com.webapp.WebAppTest" time="0.085">
+    <error message="Reached error page: about:neterror?e=connectionFailure&amp;u=http%3A//localhost%3A8000/users/delete/all&amp;c=UTF-8&amp;d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.&#10;Build info: version: &apos;4.44.0&apos;, revision: &apos;da2039b&apos;&#10;System info: os.name: &apos;Linux&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;6.18.12+kali-amd64&apos;, java.version: &apos;21.0.11&apos;&#10;Driver info: org.openqa.selenium.firefox.FirefoxDriver&#10;Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]&#10;Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}&#10;Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f" type="org.openqa.selenium.WebDriverException"><![CDATA[org.openqa.selenium.WebDriverException: 
+Reached error page: about:neterror?e=connectionFailure&u=http%3A//localhost%3A8000/users/delete/all&c=UTF-8&d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.
+Build info: version: '4.44.0', revision: 'da2039b'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.18.12+kali-amd64', java.version: '21.0.11'
+Driver info: org.openqa.selenium.firefox.FirefoxDriver
+Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]
+Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}
+Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f
+	at org.openqa.selenium.remote.ErrorCodec.decode(ErrorCodec.java:169)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:143)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:50)
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:224)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.invokeExecute(DriverCommandExecutor.java:217)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:175)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)
+	at org.openqa.selenium.remote.RemoteWebDriver.get(RemoteWebDriver.java:366)
+	at com.webapp.WebAppTest.init(WebAppTest.java:143)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></error>
+  </testcase>
+  <testcase name="PaginaDeveConterTodosElementosDoFormularioDeRegistro" classname="com.webapp.WebAppTest" time="0.08">
+    <error message="Reached error page: about:neterror?e=connectionFailure&amp;u=http%3A//localhost%3A8000/users/delete/all&amp;c=UTF-8&amp;d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.&#10;Build info: version: &apos;4.44.0&apos;, revision: &apos;da2039b&apos;&#10;System info: os.name: &apos;Linux&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;6.18.12+kali-amd64&apos;, java.version: &apos;21.0.11&apos;&#10;Driver info: org.openqa.selenium.firefox.FirefoxDriver&#10;Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]&#10;Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}&#10;Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f" type="org.openqa.selenium.WebDriverException"><![CDATA[org.openqa.selenium.WebDriverException: 
+Reached error page: about:neterror?e=connectionFailure&u=http%3A//localhost%3A8000/users/delete/all&c=UTF-8&d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.
+Build info: version: '4.44.0', revision: 'da2039b'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.18.12+kali-amd64', java.version: '21.0.11'
+Driver info: org.openqa.selenium.firefox.FirefoxDriver
+Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]
+Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}
+Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f
+	at org.openqa.selenium.remote.ErrorCodec.decode(ErrorCodec.java:169)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:143)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:50)
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:224)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.invokeExecute(DriverCommandExecutor.java:217)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:175)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)
+	at org.openqa.selenium.remote.RemoteWebDriver.get(RemoteWebDriver.java:366)
+	at com.webapp.WebAppTest.init(WebAppTest.java:143)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></error>
+  </testcase>
+  <testcase name="deveRetornarMensagemIndicandoParaPreencherCampoSenha" classname="com.webapp.WebAppTest" time="0.08">
+    <error message="Reached error page: about:neterror?e=connectionFailure&amp;u=http%3A//localhost%3A8000/users/delete/all&amp;c=UTF-8&amp;d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.&#10;Build info: version: &apos;4.44.0&apos;, revision: &apos;da2039b&apos;&#10;System info: os.name: &apos;Linux&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;6.18.12+kali-amd64&apos;, java.version: &apos;21.0.11&apos;&#10;Driver info: org.openqa.selenium.firefox.FirefoxDriver&#10;Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]&#10;Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}&#10;Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f" type="org.openqa.selenium.WebDriverException"><![CDATA[org.openqa.selenium.WebDriverException: 
+Reached error page: about:neterror?e=connectionFailure&u=http%3A//localhost%3A8000/users/delete/all&c=UTF-8&d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.
+Build info: version: '4.44.0', revision: 'da2039b'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.18.12+kali-amd64', java.version: '21.0.11'
+Driver info: org.openqa.selenium.firefox.FirefoxDriver
+Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]
+Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}
+Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f
+	at org.openqa.selenium.remote.ErrorCodec.decode(ErrorCodec.java:169)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:143)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:50)
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:224)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.invokeExecute(DriverCommandExecutor.java:217)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:175)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)
+	at org.openqa.selenium.remote.RemoteWebDriver.get(RemoteWebDriver.java:366)
+	at com.webapp.WebAppTest.init(WebAppTest.java:143)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></error>
+  </testcase>
+  <testcase name="deveFalharAoTentarCriarUsuarioComNomeDeUsuarioExistente" classname="com.webapp.WebAppTest" time="0.077">
+    <error message="Reached error page: about:neterror?e=connectionFailure&amp;u=http%3A//localhost%3A8000/users/delete/all&amp;c=UTF-8&amp;d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.&#10;Build info: version: &apos;4.44.0&apos;, revision: &apos;da2039b&apos;&#10;System info: os.name: &apos;Linux&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;6.18.12+kali-amd64&apos;, java.version: &apos;21.0.11&apos;&#10;Driver info: org.openqa.selenium.firefox.FirefoxDriver&#10;Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]&#10;Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}&#10;Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f" type="org.openqa.selenium.WebDriverException"><![CDATA[org.openqa.selenium.WebDriverException: 
+Reached error page: about:neterror?e=connectionFailure&u=http%3A//localhost%3A8000/users/delete/all&c=UTF-8&d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.
+Build info: version: '4.44.0', revision: 'da2039b'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.18.12+kali-amd64', java.version: '21.0.11'
+Driver info: org.openqa.selenium.firefox.FirefoxDriver
+Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]
+Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}
+Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f
+	at org.openqa.selenium.remote.ErrorCodec.decode(ErrorCodec.java:169)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:143)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:50)
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:224)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.invokeExecute(DriverCommandExecutor.java:217)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:175)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)
+	at org.openqa.selenium.remote.RemoteWebDriver.get(RemoteWebDriver.java:366)
+	at com.webapp.WebAppTest.init(WebAppTest.java:143)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></error>
+  </testcase>
+  <testcase name="deveFalharAoTentarCriarUsuarioComEmailExistente" classname="com.webapp.WebAppTest" time="0.087">
+    <error message="Reached error page: about:neterror?e=connectionFailure&amp;u=http%3A//localhost%3A8000/users/delete/all&amp;c=UTF-8&amp;d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.&#10;Build info: version: &apos;4.44.0&apos;, revision: &apos;da2039b&apos;&#10;System info: os.name: &apos;Linux&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;6.18.12+kali-amd64&apos;, java.version: &apos;21.0.11&apos;&#10;Driver info: org.openqa.selenium.firefox.FirefoxDriver&#10;Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]&#10;Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}&#10;Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f" type="org.openqa.selenium.WebDriverException"><![CDATA[org.openqa.selenium.WebDriverException: 
+Reached error page: about:neterror?e=connectionFailure&u=http%3A//localhost%3A8000/users/delete/all&c=UTF-8&d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.
+Build info: version: '4.44.0', revision: 'da2039b'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.18.12+kali-amd64', java.version: '21.0.11'
+Driver info: org.openqa.selenium.firefox.FirefoxDriver
+Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]
+Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}
+Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f
+	at org.openqa.selenium.remote.ErrorCodec.decode(ErrorCodec.java:169)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:143)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:50)
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:224)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.invokeExecute(DriverCommandExecutor.java:217)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:175)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)
+	at org.openqa.selenium.remote.RemoteWebDriver.get(RemoteWebDriver.java:366)
+	at com.webapp.WebAppTest.init(WebAppTest.java:143)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></error>
+  </testcase>
+  <testcase name="deveRetornarMensagemIndicandoParaPreencherCampoPais" classname="com.webapp.WebAppTest" time="0.078">
+    <error message="Reached error page: about:neterror?e=connectionFailure&amp;u=http%3A//localhost%3A8000/users/delete/all&amp;c=UTF-8&amp;d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.&#10;Build info: version: &apos;4.44.0&apos;, revision: &apos;da2039b&apos;&#10;System info: os.name: &apos;Linux&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;6.18.12+kali-amd64&apos;, java.version: &apos;21.0.11&apos;&#10;Driver info: org.openqa.selenium.firefox.FirefoxDriver&#10;Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]&#10;Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}&#10;Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f" type="org.openqa.selenium.WebDriverException"><![CDATA[org.openqa.selenium.WebDriverException: 
+Reached error page: about:neterror?e=connectionFailure&u=http%3A//localhost%3A8000/users/delete/all&c=UTF-8&d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.
+Build info: version: '4.44.0', revision: 'da2039b'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.18.12+kali-amd64', java.version: '21.0.11'
+Driver info: org.openqa.selenium.firefox.FirefoxDriver
+Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]
+Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}
+Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f
+	at org.openqa.selenium.remote.ErrorCodec.decode(ErrorCodec.java:169)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:143)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:50)
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:224)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.invokeExecute(DriverCommandExecutor.java:217)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:175)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)
+	at org.openqa.selenium.remote.RemoteWebDriver.get(RemoteWebDriver.java:366)
+	at com.webapp.WebAppTest.init(WebAppTest.java:143)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></error>
+  </testcase>
+  <testcase name="deveRetornarMensagemIndicandoParaPreencherCampoNomeDeUsuario" classname="com.webapp.WebAppTest" time="0.091">
+    <error message="Reached error page: about:neterror?e=connectionFailure&amp;u=http%3A//localhost%3A8000/users/delete/all&amp;c=UTF-8&amp;d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.&#10;Build info: version: &apos;4.44.0&apos;, revision: &apos;da2039b&apos;&#10;System info: os.name: &apos;Linux&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;6.18.12+kali-amd64&apos;, java.version: &apos;21.0.11&apos;&#10;Driver info: org.openqa.selenium.firefox.FirefoxDriver&#10;Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]&#10;Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}&#10;Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f" type="org.openqa.selenium.WebDriverException"><![CDATA[org.openqa.selenium.WebDriverException: 
+Reached error page: about:neterror?e=connectionFailure&u=http%3A//localhost%3A8000/users/delete/all&c=UTF-8&d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.
+Build info: version: '4.44.0', revision: 'da2039b'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.18.12+kali-amd64', java.version: '21.0.11'
+Driver info: org.openqa.selenium.firefox.FirefoxDriver
+Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]
+Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}
+Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f
+	at org.openqa.selenium.remote.ErrorCodec.decode(ErrorCodec.java:169)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:143)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:50)
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:224)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.invokeExecute(DriverCommandExecutor.java:217)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:175)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)
+	at org.openqa.selenium.remote.RemoteWebDriver.get(RemoteWebDriver.java:366)
+	at com.webapp.WebAppTest.init(WebAppTest.java:143)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></error>
+  </testcase>
+  <testcase name="deveRetornarMensagemIndicandoParaPreencherCampoDataDeNascimento" classname="com.webapp.WebAppTest" time="0.09">
+    <error message="Reached error page: about:neterror?e=connectionFailure&amp;u=http%3A//localhost%3A8000/users/delete/all&amp;c=UTF-8&amp;d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.&#10;Build info: version: &apos;4.44.0&apos;, revision: &apos;da2039b&apos;&#10;System info: os.name: &apos;Linux&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;6.18.12+kali-amd64&apos;, java.version: &apos;21.0.11&apos;&#10;Driver info: org.openqa.selenium.firefox.FirefoxDriver&#10;Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]&#10;Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}&#10;Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f" type="org.openqa.selenium.WebDriverException"><![CDATA[org.openqa.selenium.WebDriverException: 
+Reached error page: about:neterror?e=connectionFailure&u=http%3A//localhost%3A8000/users/delete/all&c=UTF-8&d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.
+Build info: version: '4.44.0', revision: 'da2039b'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.18.12+kali-amd64', java.version: '21.0.11'
+Driver info: org.openqa.selenium.firefox.FirefoxDriver
+Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]
+Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}
+Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f
+	at org.openqa.selenium.remote.ErrorCodec.decode(ErrorCodec.java:169)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:143)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:50)
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:224)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.invokeExecute(DriverCommandExecutor.java:217)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:175)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)
+	at org.openqa.selenium.remote.RemoteWebDriver.get(RemoteWebDriver.java:366)
+	at com.webapp.WebAppTest.init(WebAppTest.java:143)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></error>
+  </testcase>
+  <testcase name="deveRetornarMensagemIndicandoParaPreencherCampoCidade" classname="com.webapp.WebAppTest" time="0.081">
+    <error message="Reached error page: about:neterror?e=connectionFailure&amp;u=http%3A//localhost%3A8000/users/delete/all&amp;c=UTF-8&amp;d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.&#10;Build info: version: &apos;4.44.0&apos;, revision: &apos;da2039b&apos;&#10;System info: os.name: &apos;Linux&apos;, os.arch: &apos;amd64&apos;, os.version: &apos;6.18.12+kali-amd64&apos;, java.version: &apos;21.0.11&apos;&#10;Driver info: org.openqa.selenium.firefox.FirefoxDriver&#10;Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]&#10;Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}&#10;Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f" type="org.openqa.selenium.WebDriverException"><![CDATA[org.openqa.selenium.WebDriverException: 
+Reached error page: about:neterror?e=connectionFailure&u=http%3A//localhost%3A8000/users/delete/all&c=UTF-8&d=Firefox%20can%E2%80%99t%20establish%20a%20connection%20to%20the%20server%20at%20localhost%3A8000.
+Build info: version: '4.44.0', revision: 'da2039b'
+System info: os.name: 'Linux', os.arch: 'amd64', os.version: '6.18.12+kali-amd64', java.version: '21.0.11'
+Driver info: org.openqa.selenium.firefox.FirefoxDriver
+Command: [a13d7b31-7fe7-43cb-9c78-a9ed13fd311f, get {url=localhost:8000/users/delete/all}]
+Capabilities {acceptInsecureCerts: true, browserName: firefox, browserVersion: 140.8.0, moz:accessibilityChecks: false, moz:buildID: 20260217105505, moz:geckodriverVersion: 0.37.0, moz:headless: false, moz:platformVersion: 6.18.12+kali-amd64, moz:processID: 76546, moz:profile: /tmp/rust_mozprofilen19qLg, moz:shutdownTimeout: 60000, moz:webdriverClick: true, moz:windowless: false, pageLoadStrategy: normal, platformName: linux, proxy: Proxy(), setWindowRect: true, strictFileInteractability: false, timeouts: {implicit: 0, pageLoad: 300000, script: 30000}, unhandledPromptBehavior: dismiss and notify, userAgent: Mozilla/5.0 (X11; Linux x86...}
+Session ID: a13d7b31-7fe7-43cb-9c78-a9ed13fd311f
+	at org.openqa.selenium.remote.ErrorCodec.decode(ErrorCodec.java:169)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:143)
+	at org.openqa.selenium.remote.codec.w3c.W3CHttpResponseCodec.decode(W3CHttpResponseCodec.java:50)
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:224)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.invokeExecute(DriverCommandExecutor.java:217)
+	at org.openqa.selenium.remote.service.DriverCommandExecutor.execute(DriverCommandExecutor.java:175)
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:600)
+	at org.openqa.selenium.remote.RemoteWebDriver.get(RemoteWebDriver.java:366)
+	at com.webapp.WebAppTest.init(WebAppTest.java:143)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></error>
+  </testcase>
+</testsuite>
