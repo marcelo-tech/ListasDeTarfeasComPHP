@@ -102,4 +102,38 @@ class ListController
         $path = $this->templates . '/' . $template;
         require_once $path;
     }
+
+
+    function processRemoveTask() {
+        $taskList = [];
+        $template = "tasks.php";
+        $path = $this->templates . '/' . $template;
+
+        $listName = $_GET['listName'] ?? '';
+        $id = $_GET['id'];
+        if(gettype($listName) === 'array') {
+            $listName = $listName[0];
+        }
+        if(gettype($id) === 'array') {
+            $id = $id[0];
+        }
+
+        if(empty($listName) || empty($id)) {
+            header("Location: /?action=todo&listName=$listName&id=$id");
+            return;
+        }
+
+        $listData = $this->listRepository->findListByName($listName);
+        if(empty($listData)) {
+            header("Location: /");
+            return;
+        }
+
+        $list_id = (int)$listData['id'];
+        $task_id = (int)$id;
+        $this->listRepository->deleteTask($task_id, $list_id);
+
+        $taskList = $this->listRepository->getTasks($list_id);
+        require_once $path;
+    }
 }

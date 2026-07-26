@@ -35,6 +35,10 @@ class Application
                 $listController->processNewTaskData();
                 break;
 
+            case 'remove-task':
+                $listController->processRemoveTask();
+                break;
+
             case 'login':
                 $userController->displayLoginPage();
                 break;

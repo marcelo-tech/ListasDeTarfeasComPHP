@@ -135,11 +135,11 @@ public class TasksTest {
         new TasksPage(driver).createTask("Comprar HD");
         new TasksPage(driver).createTask("Comprar monitor");
 
-        var removeTasksButtons = new TasksPage(driver).getRemoveTasksButtons();
-
-        for(WebElement btn : removeTasksButtons) {
-            btn.click();
-        }
+        var btn = new TasksPage(driver).getRemoveTasksButton(0);
+        btn.click();
+        
+        new TasksPage(driver).getRemoveTasksButton(0).click();
+        new TasksPage(driver).getRemoveTasksButton(0).click();
 
         assertThat(new TasksPage(driver).getTasksLinks().size()).isEqualTo(0);
     }

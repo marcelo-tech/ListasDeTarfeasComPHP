@@ -100,6 +100,20 @@ class ListRepository {
         return $tasks;
     }
 
+    function deleteTask(int $id, int $list_id) {
+        $sql = "DELETE FROM " . $this::TASKS_TABLE . " WHERE id = :id AND list_id = :list_id";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':id', $id);
+            $stmt->bindParam(':list_id', $list_id);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+
     function cleanUpTables() {
         $sqlDeleteLists = "DELETE FROM " . $this::LISTS_TABLE;
         $rebootTasksIdCounter = "ALTER TABLE " . $this::TASKS_TABLE . " AUTO_INCREMENT=0";
