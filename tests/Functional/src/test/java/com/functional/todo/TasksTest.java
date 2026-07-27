@@ -55,7 +55,30 @@ public class TasksTest {
         driver.quit();
     }
 
-    @DisplayName("Deve ser possível inserir tarefas Quando abrir a pagina tasks")
+    @Test
+    void shouldExistCreateTaskFormWhenPageTodoOpen() {
+        var listPage = new ListPage(driver);
+        var input = listPage.getListNameInput();
+        var btn = listPage.getSubmitButton();
+        input.sendKeys("Lista de tarefas do dia");
+        btn.click();
+
+        var tasksPage = new TasksPage(driver);
+        assertThat(tasksPage.getNewTasksForm().isEnabled()).isTrue();
+    }
+
+    @Test
+    void shouldExistTaskListWhenPageTodoOpen() {
+        var listPage = new ListPage(driver);
+        var input = listPage.getListNameInput();
+        var btn = listPage.getSubmitButton();
+        input.sendKeys("Partes que precisão de concerto no carro");
+        btn.click();
+
+        var tasksPage = new TasksPage(driver);
+        assertThat(tasksPage.getTasksList().isEnabled()).isTrue();
+    }
+
     @Test
     public void shouldBePossibleToInsertTasksWhenOnTasksPage() {
         var listPage = new ListPage(driver);
@@ -137,10 +160,24 @@ public class TasksTest {
 
         var btn = new TasksPage(driver).getRemoveTasksButton(0);
         btn.click();
-        
+
         new TasksPage(driver).getRemoveTasksButton(0).click();
         new TasksPage(driver).getRemoveTasksButton(0).click();
 
         assertThat(new TasksPage(driver).getTasksLinks().size()).isEqualTo(0);
+    }
+
+    @Test
+    void shouldBePossibleToMarkTasksAsDoneWhenClickOnMarkTaskAsDone() {
+        listPage.createList("Lista de compras");
+        new TasksPage(driver).createTask("Comprar leite");
+        new TasksPage(driver).createTask("Comprar ovos");
+        new TasksPage(driver).createTask("Comprar açúcar");
+        var btn = new TasksPage(driver).getMarkTasksAsDoneButton(1);
+        btn.click();
+
+        var p = new TasksPage(driver).getTasksParagraph(1);
+        assertThat(p.getText()).containsIgnoringCase("comprar ovos");
+        assertThat(p.getAttribute("class")).containsIgnoringCase("task-done");
     }
 }

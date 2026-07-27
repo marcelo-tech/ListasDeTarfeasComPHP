@@ -11,7 +11,7 @@ $listName = $listName ?? 'Unknown';
 <body>
     <?php require_once 'header.php'; ?>
     <main class="container bg-light">
-        <h1 class="text-dark fw-bold text-center"><?= $listName ?></h1>
+        <h2 class="text-center title"><?= $listName ?></h2>
         <hr class="mb-5"/>
 
         <form action="/?action=process-new-task&listName=<?= $listName ?>" method="post" id="newTaskForm">
@@ -28,12 +28,10 @@ $listName = $listName ?? 'Unknown';
             </div>
         </form>
 
-        <hr class="my-5" />
-
         <section id="taskListSection">
-            <ul class="list-group text-danger fw-bold fs-3" id="tasksList">
+            <ul class="list-group text-secondary fw-bold fs-3" id="tasksList">
                 <?php foreach ($taskList as $task): ?>
-                    <li class="row align-items-center">
+                    <li class="row align-items-center mb-1">
                         <div class="col-2 row justify-content-center">
                             <a href="/?action=remove-task&id=<?= $task['id'] ?>&listName=<?= $listName ?>" class="col-4 text-danger" title="Excluir tarefa">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
@@ -48,7 +46,7 @@ $listName = $listName ?? 'Unknown';
                                 </svg>
                             </a>
                         </div>
-                        <p class="col-10 m-0">
+                        <p class="col-10 m-0 <?= $task['done'] == '1' ? 'task-done' : '' ?>">
                             <?= $task['name'] ?>
                         </p>
                     </li>

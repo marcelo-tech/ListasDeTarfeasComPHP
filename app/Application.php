@@ -15,12 +15,11 @@ class Application
     {
         $action = filter_input(INPUT_GET, 'action');
         $listController = new ListController();
-        $userController = new UserController();
         $listRepository = new ListRepository();
 
         switch ($action) {
-            case 'all-lists':
-                $listController->displayAllListPage();
+            case 'lists':
+                $listController->displayListsPage();
                 break;
 
             case 'todo':
@@ -41,22 +40,6 @@ class Application
 
             case 'task-done':
                 $listController->processMarkTaskAsDone();
-                break;
-
-            case 'login':
-                $userController->displayLoginPage();
-                break;
-
-            case 'process-login':
-                $userController->processNewLoginData();
-                break;
-
-            case 'account':
-                $userController->displayNewAccountPage();
-                break;
-
-            case 'process-account':
-                $userController->processNewAccountData();
                 break;
 
             case 'test-cleanup-tables':

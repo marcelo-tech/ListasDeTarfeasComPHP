@@ -34,4 +34,23 @@ class ListRepositoryTest extends TestCase
         $this->assertEquals('3', $tasks[2]['id']);
         $this->assertEquals('comprar leite', $tasks[0]['name']);
     }
+
+    #[Test]
+    function shouldReturnTheNumberOfTasksPerListWhenListExists(): void
+    {
+        $listRepository = new ListRepository();
+        $listRepository->cleanUpTables();
+        $listName = "Lista de compras";
+        $taskNames = ['comprar leite', 'comprar ovos', 'comprar açucar'];
+        $listRepository->createList($listName);
+        $list_id = (int)$listRepository->findListByName($listName)['id'];
+
+        foreach($taskNames as $taskName) {
+            $listRepository->createTask($taskName, $list_id);
+        }
+
+        $numberOfTasks = $listRepository->findNumberOfTasksPerList($list_id);
+        
+        $this->assertEquals(3, $numberOfTasks);
+    }
 }

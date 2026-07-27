@@ -13,6 +13,28 @@
         body > main:first-of-type {
             min-height: 95vh;
             padding-bottom: 2rem;
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+        }
+
+        .task-done {
+            text-decoration: line-through;
+            color: green;
+        }
+
+        .title {
+            text-transform: capitalize;
+            color: darkorchid; 
+            padding-block: 1rem;
+        }
+
+        .hover:hover {
+            opacity: 0.7;
+        }
+
+        #newTaskForm {
+            padding-block: 1.5rem;
+            margin-bottom: 1.2rem;
         }
     </style>
 </head>

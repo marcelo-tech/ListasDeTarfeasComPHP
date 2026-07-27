@@ -14,8 +14,10 @@ public class TasksPage {
     private final By submitButton = By.cssSelector("#submitButton");
 
     // tasks list
-    private final By tasksList = By.className("tasksList");
+    private final By tasksList = By.cssSelector("#tasksList");
     private final By tasksLink = By.cssSelector("#tasksList > li a[href]:first-child");
+    private final By markTasksAsDoneLink = By.cssSelector("#tasksList > li a[href]:nth-of-type(2)");
+    private final By tasksParagraph = By.cssSelector("#tasksList > li > p:first-of-type");
 
     public TasksPage(WebDriver driver) {
         this.driver = driver;
@@ -43,6 +45,14 @@ public class TasksPage {
 
     public WebElement getRemoveTasksButton(int index) {
         return driver.findElements(tasksLink).get(index);
+    }
+
+    public WebElement getMarkTasksAsDoneButton(int index) {
+        return driver.findElements(markTasksAsDoneLink).get(index);
+    }
+
+    public WebElement getTasksParagraph(int index) {
+        return driver.findElements(tasksParagraph).get(index);
     }
 
     public void createTask(String taskName) {

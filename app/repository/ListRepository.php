@@ -16,7 +16,7 @@ class ListRepository {
     private const LISTS_TABLE = 'lists';
     private const TASKS_TABLE = 'tasks';
     private const LISTS_FIELDS = ['id', 'name'];
-    private const TASKS_FIELDS = ['id', 'name', 'list_id'] ;
+    private const TASKS_FIELDS = ['id', 'name', 'list_id', 'done'];
     private PDO $pdo;
 
     function __construct()
@@ -112,6 +112,72 @@ class ListRepository {
             $this->printErrorMessage($e->getMessage());
             die;
         }
+    }
+
+    function findTaskById(int $id) {
+        $sql = "SELECT * FROM " . $this::TASKS_TABLE . " WHERE id = :id";
+        $task = null;
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":id", $id);
+            $stmt->execute();
+            $task = $stmt->fetch(pdo::FETCH_ASSOC);
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $task;
+    }
+
+    function updateTask(array $taskData) {
+        $sql = "UPDATE " . $this::TASKS_TABLE . " SET name = :name, list_id = :list_id, done = :done WHERE id = :id";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':name', $taskData['name']);
+            $stmt->bindParam(':list_id', $taskData['list_id']);
+            $stmt->bindParam(':done', $taskData['done']);
+            $stmt->bindParam(':id', $taskData['id']);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+
+    function getLists() {
+        $sql = "SELECT * FROM " . $this::LISTS_TABLE;
+        $lists = [];
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            $lists = $stmt->fetchAll(pdo::FETCH_ASSOC);
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $lists;
+    }
+
+    function findNumberOfTasksPerList(int $list_id) {
+        $sql = "SELECT * FROM " . $this::TASKS_TABLE . " WHERE list_id = :list_id";
+        $count = 0;
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":list_id", $list_id);
+            $stmt->execute();
+            $count = count($stmt->fetchAll(pdo::FETCH_ASSOC));
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $count;
     }
 
     function cleanUpTables() {

@@ -20,7 +20,7 @@
     "scripts": {
         "dev": "php -S localhost:8000 -t public",
         "test": "./vendor/bin/phpunit",
-        "feature-test": "mvn -f tests/Feature/Fuctional/pom.xml test"
+        "functional-test": "mvn -f tests/Functional/pom.xml test"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,

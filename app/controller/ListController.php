@@ -20,6 +20,7 @@ class ListController
 
     function displayNewListPage()
     {
+        $newListLink = 'text-info';
         $template = 'list.php';
         $path = $this->templates . '/' . $template;
         require_once $path;
@@ -41,10 +42,11 @@ class ListController
         return;
     }
 
-    private function loadTasksPage(array $taskList, string $listName) {
+    private function loadTasksPage(array $taskList, string $listName)
+    {
         $template = 'tasks.php';
         $path = $this->templates . '/' . $template;
-        require_once $path; 
+        require_once $path;
     }
 
     function displayNewTasksPage()
@@ -99,25 +101,26 @@ class ListController
     }
 
 
-    function processRemoveTask() {
+    function processRemoveTask()
+    {
         $taskList = [];
         $listName = $_GET['listName'] ?? '';
         $id = $_GET['id'];
 
-        if(gettype($listName) === 'array') {
+        if (gettype($listName) === 'array') {
             $listName = $listName[0];
         }
-        if(gettype($id) === 'array') {
+        if (gettype($id) === 'array') {
             $id = $id[0];
         }
 
-        if(empty($listName) || empty($id)) {
+        if (empty($listName) || empty($id)) {
             header("Location: /?action=todo&listName=$listName&id=$id");
             return;
         }
 
         $listData = $this->listRepository->findListByName($listName);
-        if(empty($listData)) {
+        if (empty($listData)) {
             header("Location: /");
             return;
         }
@@ -127,11 +130,68 @@ class ListController
         $this->listRepository->deleteTask($task_id, $list_id);
 
         $taskList = $this->listRepository->getTasks($list_id);
-        
+
         $this->loadTasksPage($taskList, $listName);
     }
 
-    function processMarkTaskAsDone() {
+    function processMarkTaskAsDone()
+    {
+        $taskList = [];
+        $id = $_GET['id'] ?? '';
+        $listName = $_GET['listName'] ?? '';
 
+        if (empty($listName) || empty($id)) {
+            header("Location: /?action=todo&listName=$listName&id=$id");
+            return;
+        }
+
+        if (gettype($listName) === 'array') {
+            $listName = $listName[0];
+        }
+        if (gettype($id) === 'array') {
+            $id = $id[0];
+        }
+
+        $listData = $this->listRepository->findListByName($listName);
+
+        if (empty($listData)) {
+            header('Location: /');
+            return;
+        }
+
+        $list_id = (int)$listData['id'];
+        $task_id = (int)$id;
+
+        $taskData = $this->listRepository->findTaskById($task_id);
+
+        if (empty($taskData) || $taskData['list_id'] !== $list_id) {
+            header("Location: /?action=todo&listName=$listName&id=$id");
+            return;
+        }
+
+        // Mark task as done.
+        $taskData['done'] = 1;
+
+        $this->listRepository->updateTask($taskData);
+
+        $taskList = $this->listRepository->getTasks($list_id);
+
+        $this->loadTasksPage($taskList, $listName);
+    }
+
+    function displayListsPage() {
+        $listsLink = 'text-info';
+        $lists = [];
+        $template = "lists.php";
+        $path = $this->templates . '/' . $template;
+
+        $lists = $this->listRepository->getLists();
+
+        foreach($lists as $key => $list) {
+            $numberOfTasks = $this->listRepository->findNumberOfTasksPerList((int)$list['id']);
+            $lists[$key]['numberOfTasks'] = $numberOfTasks;
+        }
+
+        require_once $path;
     }
 }

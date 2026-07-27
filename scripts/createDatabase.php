@@ -33,6 +33,7 @@ function createTableTasks() {
     $sql = "CREATE TABLE IF NOT EXISTS tasks(
             id INT AUTO_INCREMENT PRIMARY KEY, 
             name VARCHAR(255), list_id INT,
+            done BOOLEAN NOT NULL DEFAULT FALSE,
             FOREIGN KEY (list_id) REFERENCES lists(id) ON DELETE CASCADE
             )";
 
