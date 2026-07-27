@@ -114,6 +114,20 @@ class ListRepository {
         }
     }
 
+    function deleteList(string $listName) {
+        $sql = "DELETE FROM " . $this::LISTS_TABLE . " WHERE name = :name";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":name", $listName);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+
+
     function findTaskById(int $id) {
         $sql = "SELECT * FROM " . $this::TASKS_TABLE . " WHERE id = :id";
         $task = null;
@@ -178,6 +192,23 @@ class ListRepository {
         }
 
         return $count;
+    }
+
+    function findTaskByName(string $taskName, int $list_id) {
+        $sql = "SELECT * FROM " . $this::TASKS_TABLE . " WHERE name = :name AND list_id = :list_id";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":name", $taskName);
+            $stmt->bindParam(":list_id", $list_id);
+            $stmt->execute();
+            $task = $stmt->fetch(pdo::FETCH_ASSOC);
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $task;
     }
 
     function cleanUpTables() {

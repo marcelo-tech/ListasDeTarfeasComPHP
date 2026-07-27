@@ -38,6 +38,10 @@ class Application
                 $listController->processRemoveTask();
                 break;
 
+            case 'remove-list':
+                $listController->processRemoveList();
+                break;
+
             case 'task-done':
                 $listController->processMarkTaskAsDone();
                 break;
