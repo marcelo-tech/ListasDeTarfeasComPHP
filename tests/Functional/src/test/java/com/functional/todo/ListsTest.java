@@ -4,7 +4,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.util.concurrent.TimeUnit;
@@ -35,7 +34,7 @@ public class ListsTest {
 
     @Test
     void shouldExistNavLinkForListsWhenListsPageLoad() {
-        new ListPage(driver).createList("Lista de ferramentas");
+        new NewListPage(driver).createList("Lista de ferramentas");
         var listsPage = new ListsPage(driver);
         var navLinks = listsPage.getNavLinks();
         var newListLink = navLinks.get(0);
@@ -57,13 +56,13 @@ public class ListsTest {
     @Test
     void shouldHaveTheNamesOfTheListsCreatedWhenListsPageLoad() {
         String  url = "localhost:8000";
-        new ListPage(driver).createList("Lista de compras");
+        new NewListPage(driver).createList("Lista de compras");
 
         driver.get(url);
-        new ListPage(driver).createList("Ingredientes da receita de bolo");
+        new NewListPage(driver).createList("Ingredientes da receita de bolo");
 
         driver.get(url);
-        new ListPage(driver).createList("Peças para concertar no carro");
+        new NewListPage(driver).createList("Peças para concertar no carro");
 
         driver.get(url + "/?action=lists");
         var listsPage = new ListsPage(driver);
@@ -76,7 +75,7 @@ public class ListsTest {
 
     @Test
     void shouldHaveTheNumberOfTasksOnEachListWhenListsExistsOnPage() {
-        new ListPage(driver).createList("Lista de compras");
+        new NewListPage(driver).createList("Lista de compras");
         new TasksPage(driver).createTask("Comprar leite");
         new TasksPage(driver).createTask("Comprar açúcar");
         new TasksPage(driver).createTask("Comprar ovos");

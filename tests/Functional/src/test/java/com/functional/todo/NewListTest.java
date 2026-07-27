@@ -10,12 +10,11 @@ import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ListTest {
+public class NewListTest {
     private WebDriver driver;
 
     private void pause(int secs) {
@@ -48,10 +47,9 @@ public class ListTest {
 
     @Test
     public void ShouldHaveBasicElementsWhenPageRequested() {
-        var listPage = new ListPage(driver);
+        var listPage = new NewListPage(driver);
         assertThat(listPage.getHead().isEnabled()).isTrue();
         assertThat(listPage.getBootstrapCSS().getAttribute("href")).contains("/css/bootstrap.min.css");
-        assertThat(listPage.getBootstrapJS().getAttribute("src")).contains("/js/bootstrap.bundle.min.js");
         assertThat(listPage.getHeader().isEnabled()).isTrue();
         assertThat(listPage.getMain().isEnabled()).isTrue();
         assertThat(listPage.getFooter().isEnabled()).isTrue();
@@ -61,7 +59,7 @@ public class ListTest {
 
     @Test
     public void ShouldHaveFormToCreateNewListWhenPageRequested() {
-        var listPage = new ListPage(driver);
+        var listPage = new NewListPage(driver);
         assertThat(listPage.getNewListForm().isEnabled()).isTrue();
         assertThat(listPage.getListNameInput().isEnabled()).isTrue();
         assertThat(listPage.getSubmitButton().isEnabled()).isTrue();

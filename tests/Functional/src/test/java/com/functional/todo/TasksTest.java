@@ -2,7 +2,6 @@ package com.functional.todo;
 
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.util.concurrent.TimeUnit;
@@ -12,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TasksTest {
     private WebDriver driver;
-    private ListPage listPage;
+    private NewListPage listPage;
 
     private void pause(int secs) {
         try {
@@ -28,7 +27,7 @@ public class TasksTest {
         driver.get("localhost:8000/?action=test-cleanup-tables");
         //pause(1);
         driver.get(url);
-        listPage = new ListPage(driver);
+        listPage = new NewListPage(driver);
     }
 
     @AfterEach
@@ -46,7 +45,7 @@ public class TasksTest {
     @DisplayName("Deve redirecionar para pagina tasks Quando criar lista com sucesso.")
     @Test
     public void shouldRedirectToTasksWhenSubmitSuccessfullyOnListPage() {
-        var listPage = new ListPage(driver);
+        var listPage = new NewListPage(driver);
         var input = listPage.getListNameInput();
         var submitListNameButton = listPage.getSubmitButton();
         input.sendKeys("Lista de compras");
@@ -57,7 +56,7 @@ public class TasksTest {
 
     @Test
     void shouldExistCreateTaskFormWhenPageTodoOpen() {
-        var listPage = new ListPage(driver);
+        var listPage = new NewListPage(driver);
         var input = listPage.getListNameInput();
         var btn = listPage.getSubmitButton();
         input.sendKeys("Lista de tarefas do dia");
@@ -69,7 +68,7 @@ public class TasksTest {
 
     @Test
     void shouldExistTaskListWhenPageTodoOpen() {
-        var listPage = new ListPage(driver);
+        var listPage = new NewListPage(driver);
         var input = listPage.getListNameInput();
         var btn = listPage.getSubmitButton();
         input.sendKeys("Partes que precisão de concerto no carro");
@@ -81,7 +80,7 @@ public class TasksTest {
 
     @Test
     public void shouldBePossibleToInsertTasksWhenOnTasksPage() {
-        var listPage = new ListPage(driver);
+        var listPage = new NewListPage(driver);
         var listInput = listPage.getListNameInput();
         var listSubmitButton = listPage.getSubmitButton();
         listInput.sendKeys("Lista de compras");
@@ -99,7 +98,7 @@ public class TasksTest {
 
     @Test
     void shouldIdAttributeBePresentOnEachTaskWhenCreated() {
-        var listPage = new ListPage(driver);
+        var listPage = new NewListPage(driver);
         var listInput = listPage.getListNameInput();
         var listSubmitButton = listPage.getSubmitButton();
         listInput.sendKeys("Lista de compras");
@@ -117,7 +116,7 @@ public class TasksTest {
 
     @Test
     void shouldBePossibleToInsertMoreThanOneTaskWhenCreatingTasks() {
-        var listPage = new ListPage(driver);
+        var listPage = new NewListPage(driver);
         listPage.createList("Lista de compras");
         var tasks = new TasksPage(driver);
 
@@ -131,7 +130,7 @@ public class TasksTest {
 
     @Test
     void shouldFindTasksIdSequenceWhenCreatingMultipleTasks() {
-        var listPage = new ListPage(driver);
+        var listPage = new NewListPage(driver);
         listPage.createList("Lista de compras");
         TasksPage tasksPage = new TasksPage(driver);
         tasksPage.createTask("Comprar leite");

@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Hello world!
  */
-public class ListPage {
+public class NewListPage {
     private final WebDriver driver;
     private final By titleLocator = By.cssSelector("head > title");
     private final By bootstrapCSSLocator = By.cssSelector("head > link:first-of-type");
@@ -22,7 +22,7 @@ public class ListPage {
     private final By listNameInput = By.cssSelector("#listName");
     private final By submitButton = By.cssSelector("#submitButton");
 
-    public ListPage(WebDriver driver) {
+    public NewListPage(WebDriver driver) {
         this.driver = driver;
     }
 
