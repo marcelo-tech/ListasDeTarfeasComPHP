@@ -39,6 +39,10 @@ class Application
                 $listController->processRemoveTask();
                 break;
 
+            case 'task-done':
+                $listController->processMarkTaskAsDone();
+                break;
+
             case 'login':
                 $userController->displayLoginPage();
                 break;

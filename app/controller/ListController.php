@@ -41,6 +41,12 @@ class ListController
         return;
     }
 
+    private function loadTasksPage(array $taskList, string $listName) {
+        $template = 'tasks.php';
+        $path = $this->templates . '/' . $template;
+        require_once $path; 
+    }
+
     function displayNewTasksPage()
     {
         $taskList = [];
@@ -50,10 +56,7 @@ class ListController
             $listData = $this->listRepository->findListByName($listName);
             if (!empty($listData)) {
                 $id = (int)$listData['id'];
-                $allTasksRecords = $this->listRepository->getTasks($id);
-                foreach($allTasksRecords as $taskData) {
-                    $taskList[] = $taskData;
-                }
+                $taskList = $this->listRepository->getTasks($id);
             } else {
                 // Create list first
                 header("Location: /");
@@ -61,10 +64,7 @@ class ListController
             }
         }
 
-        $template = 'tasks.php';
-        $path = $this->templates . '/' . $template;
-
-        require_once $path;
+        $this->loadTasksPage($taskList, $listName);
     }
 
     function processNewTaskData()
@@ -93,24 +93,17 @@ class ListController
             $this->listRepository->createTask($taskName, $id);
         }
 
-        $allTasksRecords = $this->listRepository->getTasks($id);
-        foreach($allTasksRecords as $taskData) {
-            $taskList[] = $taskData;
-        }
+        $taskList = $this->listRepository->getTasks($id);
 
-        $template = 'tasks.php';
-        $path = $this->templates . '/' . $template;
-        require_once $path;
+        $this->loadTasksPage($taskList, $listName);
     }
 
 
     function processRemoveTask() {
         $taskList = [];
-        $template = "tasks.php";
-        $path = $this->templates . '/' . $template;
-
         $listName = $_GET['listName'] ?? '';
         $id = $_GET['id'];
+
         if(gettype($listName) === 'array') {
             $listName = $listName[0];
         }
@@ -134,6 +127,11 @@ class ListController
         $this->listRepository->deleteTask($task_id, $list_id);
 
         $taskList = $this->listRepository->getTasks($list_id);
-        require_once $path;
+        
+        $this->loadTasksPage($taskList, $listName);
+    }
+
+    function processMarkTaskAsDone() {
+
     }
 }
