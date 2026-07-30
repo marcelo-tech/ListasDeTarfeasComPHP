@@ -72,7 +72,7 @@ class ListRepository {
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(":name", $name);
             $stmt->execute();
-            $list = $stmt->fetch(pdo::FETCH_ASSOC);
+            $list = $stmt->fetch(PDO::FETCH_ASSOC);
         }catch(PDOException $e) {
             $this->printErrorMessage($e->getMessage());
             die;
@@ -136,7 +136,7 @@ class ListRepository {
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(":id", $id);
             $stmt->execute();
-            $task = $stmt->fetch(pdo::FETCH_ASSOC);
+            $task = $stmt->fetch(PDO::FETCH_ASSOC);
         }catch(PDOException $e) {
             $this->printErrorMessage($e->getMessage());
             die;
@@ -168,7 +168,7 @@ class ListRepository {
         try {
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
-            $lists = $stmt->fetchAll(pdo::FETCH_ASSOC);
+            $lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }catch(PDOException $e) {
             $this->printErrorMessage($e->getMessage());
             die;
@@ -185,7 +185,12 @@ class ListRepository {
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(":list_id", $list_id);
             $stmt->execute();
-            $count = count($stmt->fetchAll(pdo::FETCH_ASSOC));
+            $lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if(!empty($lists)) {
+            $count =  count($lists);
+            }else{
+            $count = -1;
+            }
         }catch(PDOException $e) {
             $this->printErrorMessage($e->getMessage());
             die;

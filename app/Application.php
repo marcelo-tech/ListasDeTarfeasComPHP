@@ -6,7 +6,6 @@ declare(strict_types=1);
 namespace App;
 
 use App\controller\ListController;
-use App\controller\UserController;
 use App\repository\ListRepository;
 
 class Application

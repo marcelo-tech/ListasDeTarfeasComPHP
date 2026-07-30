@@ -20,7 +20,7 @@
                     <label id="listNameLabel" for="listName" class="form-label fw-bold text-secondary">Nome da lista</label>
                 </div>
                 <div class="col-6">
-                    <input name="listName" id="listName" class="form-control form-control-lg" required placeholder="Entre nome da lista..." />
+                    <input name="listName" id="listName" class="form-control form-control-lg" required placeholder="Entre nome da lista..."  minlength="2"/>
 
                 </div>
 

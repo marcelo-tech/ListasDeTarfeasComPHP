@@ -51,7 +51,6 @@ public class TasksTest {
         input.sendKeys("Lista de compras");
         submitListNameButton.click();
         assertThat(driver.getPageSource()).containsIgnoringCase("Lista de compras");
-        driver.quit();
     }
 
     @Test
@@ -93,7 +92,6 @@ public class TasksTest {
         taskInput.sendKeys("Comprar leite");
         taskSubmitButton.click();
         assertThat(driver.getPageSource()).containsIgnoringCase("Comprar leite");
-        driver.quit();
     }
 
     @Test

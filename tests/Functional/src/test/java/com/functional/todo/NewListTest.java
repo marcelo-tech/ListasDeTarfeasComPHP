@@ -46,7 +46,7 @@ public class NewListTest {
     }
 
     @Test
-    public void ShouldHaveBasicElementsWhenPageRequested() {
+    public void shouldHaveBasicElementsWhenPageRequested() {
         var listPage = new NewListPage(driver);
         assertThat(listPage.getHead().isEnabled()).isTrue();
         assertThat(listPage.getBootstrapCSS().getAttribute("href")).contains("/css/bootstrap.min.css");
@@ -58,7 +58,7 @@ public class NewListTest {
     }
 
     @Test
-    public void ShouldHaveFormToCreateNewListWhenPageRequested() {
+    public void shouldHaveFormToCreateNewListWhenPageRequested() {
         var listPage = new NewListPage(driver);
         assertThat(listPage.getNewListForm().isEnabled()).isTrue();
         assertThat(listPage.getListNameInput().isEnabled()).isTrue();

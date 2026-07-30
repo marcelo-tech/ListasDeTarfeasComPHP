@@ -1,3 +1,4 @@
+// tests/Functional/src/main/java/com/functional/todo/NewListPage.java
 package com.functional.todo;
 
 import org.openqa.selenium.By;
@@ -5,8 +6,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 /**
- * Hello world!
- */
+ * POM page object model
+ **/
 public class NewListPage {
     private final WebDriver driver;
     private final By titleLocator = By.cssSelector("head > title");

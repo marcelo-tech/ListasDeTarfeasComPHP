@@ -31,7 +31,7 @@ class ListController
         $listName = $_POST['listName'] ?? '';
         $errors = [];
 
-        if (!empty($listName) && strlen($listName)) {
+        if (!empty($listName) && strlen($listName) > 3) {
             if (empty($this->listRepository->findListByName($listName))) {
                 $this->listRepository->createList($listName);
                 header("Location: /?action=todo&listName=$listName");
@@ -57,9 +57,9 @@ class ListController
         $taskList = [];
         $listName = $_GET['listName'] ?? '';
 
-        if (!empty($listName)) {
+        if (!empty($listName) && strlen($listName) > 3) {
             $listData = $this->listRepository->findListByName($listName);
-            if (!empty($listData)) {
+            if (!empty($listData) && strlen($listName) > 2) {
                 $id = (int)$listData['id'];
                 $taskList = $this->listRepository->getTasks($id);
             } else {
@@ -80,7 +80,7 @@ class ListController
         $errors = [];
 
         // lista deve existir
-        if (empty($listName)) {
+        if (empty($listName) || strlen($listName) < 3) {
             header("Location: /");
             return;
         }
@@ -115,14 +115,7 @@ class ListController
         $listName = $_GET['listName'] ?? '';
         $id = $_GET['id'];
 
-        if (gettype($listName) === 'array') {
-            $listName = $listName[0];
-        }
-        if (gettype($id) === 'array') {
-            $id = $id[0];
-        }
-
-        if (empty($listName) || empty($id)) {
+        if (empty($listName) || empty($id) || strlen($listName) < 3) {
             header("Location: /?action=todo&listName=$listName&id=$id");
             return;
         }
@@ -151,13 +144,6 @@ class ListController
             return;
         }
 
-
-        $listData = $this->listRepository->findListByName($listName);
-        if (empty($listData)) {
-            header("Location: /?action=lists");
-            return;
-        }
-
         $this->listRepository->deleteList($listName);
 
         header("Location: /?action=lists");
@@ -172,13 +158,6 @@ class ListController
         if (empty($listName) || empty($id)) {
             header("Location: /?action=todo&listName=$listName&id=$id");
             return;
-        }
-
-        if (gettype($listName) === 'array') {
-            $listName = $listName[0];
-        }
-        if (gettype($id) === 'array') {
-            $id = $id[0];
         }
 
         $listData = $this->listRepository->findListByName($listName);
