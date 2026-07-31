@@ -19,8 +19,13 @@ class ListRepository {
     private const TASKS_FIELDS = ['id', 'name', 'list_id', 'done'];
     private PDO $pdo;
 
-    function __construct()
+    function __construct(?PDO $connection = null)
     {
+        if($connection !== null) {
+            $this->pdo = $connection;
+            return;
+        }
+
         $dsn = "mysql:dbname=" . $this::MYSQL_DATABASE . ";host=" . $this::MYSQL_HOST;
         $user = "user";
         $pass = "password";

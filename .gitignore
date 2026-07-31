@@ -8,3 +8,5 @@ TIPS.md
 tests/Functional/target/
 tests/Functional/.idea/
 .idea/
+toMarkDown.php
+.phpunit.result.cache

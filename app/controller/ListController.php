@@ -13,8 +13,13 @@ class ListController
     private ListRepository $listRepository;
 
 
-    function __construct()
+    function __construct(ListRepository | null $listRepository = null)
     {
+        if($listRepository !== null) {
+            $this->listRepository = $listRepository;
+            return;
+        }
+        
         $this->listRepository = new ListRepository();
     }
 
