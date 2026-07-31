@@ -1,6 +1,5 @@
 vendor/
 .env
-Tutorial
 tests/Feature/Fuctional/target/
 tests/Feature/Fuctional/.idea/
 tests/Feature/Fuctional/.mvn/

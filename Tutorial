@@ -1,0 +1,3673 @@
+
+Nota:
+      O projeto a seguir foi criado no sistema Kali Linux então algumas diferenças
+      em como instalar apps pode ser diferentes, mesmo em sistemas como Ubuntu, ou
+      debian e seus descendentes.
+      Se um app não pode ser instalado como mostrado a baixo, então tente
+      $ apt search nome-do-app-ou-program
+
+Preliminares:
+$ cmd - significa executar comando na linha de comando.
+Quando disser para executar comando sem especificar a pasta presumi-se
+que comando deve ser executado na raiz do projeto.
+
+
+0. Instalando o software necessario para criar o projeto.
+Para criar esse projeto precisamos dos seguintes apps instalados:
+docker, docker-compose, php, php-mysql, openjdk-21-jdk, maven,
+composer, firefox, visual studio code ...
+
+- visual studio code pode ser encontrado no site: https://code.visualstudio.com/
+extensão para PHP, no vscode: PHP-Intelephense, Language Support for Java(TM) by Red Hat
+Alternativamente voçê pode instalar IntelliJ (para java) ou PHPStorm (para php).
+Usuarios de Ubuntu podem instalar esses IDE a partir do App Store
+
+- firefox já vem instalado na maioria dos casos, então vou pular instalação no Linux.
+
+- java, javac comandos para executar java bytecode e compilar java codigo.
+Versão mais estavel é a 21 e sera usada para testar o projeto.
+$ sudo apt install openjdk-21-jdk
+
+- maven è um app que gerência pacotes em Java e pode ser instalado com
+$ sudo apt install maven
+
+- PHP é o interpretador da linguagem, geralmente já vem instalado.
+$ sudo apt install php
+
+- composer é um app que gerência pacotes em PHP e pode ser instalado com
+$ sudo apt install composer
+
+- php-mysql é um driver necessario para PHP se comunicar com MySQL (banco de dados)
+$ sudo apt install php-mysql
+
+- docker.io, docker-compose é o mais usado para gerênciar container (um tipo de maquina virtual)
+que torna fácil usar MySql e outros servidores sem precisar instalar programas no computador.
+Também é muito popular para trabalhar com desenvolvimento na nuvem (deploy).
+$ sudo apt install docker.io docker-compose
+
+
+1. Criando diretorios para o projeto.
+Precisamos de lugar lugar para criar esse projeto, eu coloco na pasta Projects em $HOME
+$ mkdir $HOME/Projects
+$ cd $HOME/Projects
+$ mkdir ListaDeTarefas
+$ cd ListaDeTarefas
+$ mkdir -p public templates app/controller app/repository
+$ mkdir -p tests/Unit scripts
+$ code . # abre vscode no diretorio atual, raiz do projeto. tambem $ idea . # para intellij idea.
+
+2. Criando script para criar java projetos mais fácilmente.
+Crie o arquivo create-java-app na pasta tests e deixe-o como abaixo:
+
+#!/usr/bin/bash --
+# path: tests/create-java-app
+
+APP_NAME=$(basename $0)
+
+if [ "$#" -eq 0 ];
+then
+   echo "Usage: $APP_NAME <project-name> [package-name]"
+   exit 1
+fi
+
+PROJECT_NAME=$1
+PACKAGE_NAME=com.functional.todo
+
+if [ "$#" -eq 2 ];
+then
+   PACKAGE_NAME=$2
+fi
+
+CMD="mvn archetype:generate"
+PROJECT="-DgroupId=$PACKAGE_NAME -DartifactId=$PROJECT_NAME"
+ARCHETYPES="-DarchetypeArtifactId=maven-archetype-quickstart"
+OPTIONS="-DarchetypeVersion=1.5 -DinteractiveMode=false"
+
+eval "$CMD $PROJECT $ARCHETYPES $OPTIONS"
+
+Pronto. Salve o arquivo.
+E uma simple bash script que usa maven para criar uma estrutura para
+o projeto de forma padrão.
+
+Agora na linha de comando, execute o seguinte:
+$ cd tests
+$ bash create-java-app Functional com.functional.todo
+
+Resumo:
+Functional é o nome artifact, com.functional.todo é um nome
+de pacote em java terminologia, ou seja, maven vai criar uma pasta chamada Functional
+na pasta tests e dentro da pasta Functional maven vai criar um esboço do projeto.
+Por exemplo: os arquivos src/main/java/com/functional/todo/App.java,
+  src/test/java/com/functional/todo/AppTest.java serão criado automaticamente.
+
+Essa parte do projeto é para executar testes automatizados usando selenium,
+java, maven, junit5, ...
+O arquivo pom.xml é criado automaticamente na pasta tests/Functional/ e precisar
+de algumas edições.
+
+$ cd .. # de volta para a raiz do projeto.
+
+3. Editando o arquivo pom.xml
+Para usar selenium, junit5 nesse projeto precisamos incluir algumas dependências no arquivo
+pom.xml. abra o arquivo tests/Functional/pom.xml deixe o arquivo pom.xml como a seguir:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- path: tests/Functional/pom.xml -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.webapp</groupId>
+  <artifactId>webapp-functionaltest</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <name>webapp-functionaltest</name>
+  <url>http://www.example.com</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>21</maven.compiler.release>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.11.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>4.44.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.27.7</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.4.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.3.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.13.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.3.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.4.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>3.1.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>3.1.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.12.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>3.6.1</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
+
+Pronto. Salve o arquivo.
+
+O destaque desse arquivo é o elemento <dependencies> que inclui selenium automaticamente,
+junit5, assertj.
+
+Ainda na pasta tests na linha de comando execute o seguinte para testar se tudo estar funcionando.
+$ cd tests/Functional
+$ mvn test
+
+Os tests devem passar, porque maven criar-os automaticamente na pasta src/test/java/com/functional/todo/AppTest.java
+
+De volta para a raiz do projeto agora:
+
+$ cd ../.. # de volta para a raiz do projeto.
+
+4. Criando o arquivo compose.yaml para MYSQL container
+Na raiz do projeto crie um arquivo chamado compose.yaml com o seguinte conteudo:
+
+# compose.yaml
+services:
+  db:
+    image: mysql:latest
+    container_name: todolistsdb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: todolists
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
+
+Pronto. Salve o arquivo.
+Nota: Esse arquivo é sensivel a espaços em banco, portanto deve ser alinhado corretamente.
+'services:' fica no inicio da linha, então 'db:' um tab a partir do inicio da linha, e assim por
+diante.
+
+A servidor MySQL é exibido na linha image: mysql:latest (imagem) significa que queremos
+a versão mais nova de mysql server, container_name é o nome do container, o campo environment:
+é usado para criar variavel de ambiente dentro do container, elas são necessarias para permitir
+acesso ao banco de dados.
+MYSQL_ROOT_PASSWORD - é a senha root de mysql, não vamos precisar
+MYSQL_DATABASE - esse é o nome do banco de dados.
+MYSQL_USER - usuario (não root) para acessar o banco de dados para criar tabelas, por exemplo.
+MYSQL_PASSWORD - senha do usuario user (não root)
+ports: - portas usadas para se comunicar com mysql de fora do container. 3306 antes do character :
+é a porta externa, 3306 depois de : é a porta interna do container.
+volumes: - onde mysql armazena os dados, dentro do container na pasta /var/lib/mysql
+A parte final que tem tambem volumes: ... quer dizer a docker para criar o volume mysql_data
+automaticamente.
+
+Existe uma distinção entre 'image' e 'container', uma imagem é estatica, ou seja ela não
+muda. Enquanto container pode mudar, voçê pode inclusive instalar programas num container.
+Voçê  não executa imagens, ou programs dentre de imagens, usamos container pra isso.
+
+Para iniciar um container voçê precisar baixar uma imagem, mais docker-compose ou docker compose
+comando vaz isso automaticamente.
+
+Então vamos iniciar o servidor mysql:
+Na raiz do projeto e na linha de comando.
+$ docker-compose up -d
+ou em alguns sistemas:
+$ docker compose up -d
+
+O container vai levar um tempo baixando a imagem e iniciando o container ...
+Se estiver tudo certo o container estara executando no modo deamon/background
+de qualquer forma voçê pode checar executando os seguintes comandos.
+$ docker ps
+lista os containers atualmente executando, um por linha, deve haver apenas um.
+$ docker ps -a
+lista todos os containers, inclusive os que estão parados.
+
+ Para para o container do mysql, sem perder todos os dados, use o seguinte.
+ $ docker-compose stop
+
+ Para iniciar novamente
+ $ docker-compose up -d
+
+ Para conectar a mysql na linha de comando dentro do container executando, com o usuario user
+ senha password, execute:
+ $ docker-compose exec db mysql -u user -ppassword
+
+exec - sub comando do docker que executa comandos dentro do container.
+db - nome do servico no arquivo compose.yaml
+mysql - comando instalado dentro do container que deve ser executado dentro do container.
+-u user -ppassword - são options passadas para o comando mysql, credencias.
+
+Deve abria uma conexão com o servidor com prompt como a seguir:
+mysql>
+Use 'exit' para sair.
+
+voçê pose executar qualquer comando valido. Por exemplo:
+primeiro log como root (sem espaço entre a senha e a opção -p):
+$ docker-compose exec db mysql -prootpassword
+mysql> SHOW DATABASES;
+mysql> CREATE DATABASE IF NOT EXISTS mydb;
+mysql> USE mydb;
+mysql> CREATE TABLE mytable(id INT PRIMARY KEY AUTO_INCREMENT, nome VARCHAR(30), sobrenome VARCHAR(30));
+mysql> SHOW COLUMNS FROM mytable;
+mysql> INSERT INTO mytable(nome, sobrenome) VALUES('john', 'doe');
+mysql> SELECT * FROM mytable;
+mysql>EXIT;
+
+Para para o servidor:
+$ docker-compose stop
+Nota: (docker-compose down) vai excluir o volume mysql_data e os dados (tabelas banco de dados) serão perdidos.
+Use esse comando para re-iniciar se hover algum error.
+
+Para remover containers pendentes que possam interferir com o desenvolvimento use:
+$ docker stop $(docker ps -q) # para todo containers
+$ docker rm $(docker ps -aq)  # remove todos os container
+
+Para mostar as imagens no seu HD use:
+$ docker images
+
+Para excluir uma imagem
+$ docker images # para exibir nomes das imagens
+$ docker image rm nome-da-image
+
+Para excluir um volume
+$ docker volume ls # para exibir o nome do volume
+$ docker volume rm nome-do-volume
+
+
+5. Criando o arquivo de configuração de composer
+Crie um arquivo chamado composer.json na raiz do projeto com o seguinte conteudo.
+
+{
+    "name": "listas/listas-de-tarefas",
+    "type": "project",
+    "description": "Lista de Tarefas app",
+    "keywords": ["lista", "tarefas", "todo", "tasks"],
+    "license": "MIT",
+    "require-dev": {
+        "phpunit/phpunit": "^13.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "dev": "php -S localhost:8000 -t public",
+        "test": "./vendor/bin/phpunit",
+        "functional-test": "mvn -f tests/Functional/pom.xml test"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "monolog/monolog": "^3.10"
+    }
+}
+
+Pronto. Salve o arquivo.
+autoload - namespace mapeamento para a pasta app.
+Por exemplo, uma classe na pasta app tem um namespace como namespace App\MyClass.
+autoload-dev - namespace para testes na pasta tests.
+require-dev - dependência da phase de desenvolvimento apenas. que inclui
+phpunit para testes automatizados.
+scripts - permite executar comando usando composer.
+Por exemplo, para executar testes usando selenium:
+$ composer run functional-test
+Para iniciar o servidor de PHP na pasta public:
+$ composer run dev
+Para executar unit testes:
+$ composer test # ou composer run test
+
+Para instalar as dependências, faça como a seguir.
+$ composer install
+$ composer dump-autoload
+
+6. Arquivo de configuração de phpunit.
+Crie um arquivo na raiz do diretorio com nome phpunit.xml com o seguinte
+conteudo:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>app</directory>
+        </include>
+    </source>
+    <php>
+        <!--env name="APP_ENV" value="testing"/-->
+    </php>
+</phpunit>
+
+Pronto. Salve o arquivo.
+As configurações inclui bootstrap, color no inicio, o que quer dizer o
+que não é preciso incluir require_once no inicio de cada arquivo, o outro
+significa que o resultado do processo sera colorido.
+Entre outras coisas, o arquivo tambem referência o diretorio app no elemento
+<source>.
+
+7. Criando o ponto de entrada do app.
+Crie o arquivo index.php na pasta public e escreve o seguinte.
+
+<?php
+//public/index.php
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use App\Application;
+
+$app = new Application();
+$app->init();
+
+Pronto. Pode salve-lo.
+Quando uma requisição chega, esse arquivo é o primero a ser executado, ou seja o
+ponto de entrada. Ele então cria uma classe e delega o processamento.
+
+use App\Application - inclui a classe que vai gerênciar requisições HTTP e chamar as
+funções adequadas. Mostra em breve.
+Então instanciamos a classe e chamamos a função init() para cuidar do resto.
+
+Apenas index.php, imagens, CSS, javascript arquivo devem estar nessa pasta, porque tudo nesse
+diretorio pode ser encontrado pelo browser. O que significa uma potencial brecha de segurança
+se voçê incluir um arquivo errado.
+
+
+8. Criando a classe Application
+Crie um arquivo na pasta app com o nome Application.php e inclua nela o seguintes conteudo.
+
+<?php
+//app/Application.php
+
+declare(strict_types=1);
+
+namespace App;
+
+use App\controller\ListController;
+use App\repository\ListRepository;
+
+class Application
+{
+    function init()
+    {
+        $action = filter_input(INPUT_GET, 'action');
+        $listController = new ListController();
+        $listRepository = new ListRepository();
+
+        switch ($action) {
+            case 'lists':
+                $listController->displayListsPage();
+                break;
+
+            case 'todo':
+                $listController->displayNewTasksPage();
+                break;
+
+            case 'process-new-list':
+                $listController->processNewListData();
+                break;
+
+            case 'process-new-task':
+                $listController->processNewTaskData();
+                break;
+
+            case 'remove-task':
+                $listController->processRemoveTask();
+                break;
+
+            case 'remove-list':
+                $listController->processRemoveList();
+                break;
+
+            case 'task-done':
+                $listController->processMarkTaskAsDone();
+                break;
+
+            case 'test-cleanup-tables':
+                $listRepository->cleanUpTables();
+                break;
+
+            default:
+                $listController->displayNewListPage();
+                break;
+        }
+    }
+}
+
+Pronto.
+Nota: Não pode haver espaços entre o inicio do arquivo e a declaração <?php
+porque esse arquivo inclui a declaração 'namespace App', essa é a razão de eu incluir
+//caminho/para/nome-do-arquivo.php depois de <?php. Tambem a função declare()
+deve vir antes do namespace.
+
+No topo incluimos duas classes que ainda não existem. A primeira e
+ListController que cuida do gerênciamento de quando criar uma lista ou uma tarefa,
+se é para exibir uma pagina em particular. A segunda é ListRepository que é usada por
+ListController para lidar com o banco de dados.
+A seguir tem a declaração switch($action)  que controla as rotas. Por exemplo:
+lists - exibe todas as listas no sistema.
+todo - exibe um lista com tarefas presente nessa lista.
+process-new-list - process criação de uma nova lista, no banco de dados.
+process-new-task - process criação de um nova tarefa em uma lista de tarefas.
+remove-task - excluir uma tarefa em uma lista de tarefas.
+remove-list - remove uma lista na tabela.
+task-done - marca uma tarefa como concluida na lista de terefas em questão.
+default: exibe pagina para criar uma nova lista.
+
+Quando uma requisição chega index.php usa Application para processar-la então
+Application recupera a variavel 'action' a partir de $_GET e analisar que decisão
+tomar.
+
+
+
+9. Criando a classe ListController.
+Crie um arquivo ListController.php na pasta app/controller com o seguinte conteudo.
+
+<?php
+//app/controller/ListController.php
+
+declare(strict_types=1);
+
+namespace App\controller;
+
+use App\repository\ListRepository;
+
+class ListController
+{
+    private string $templates = __DIR__ . "/../../templates";
+    private ListRepository $listRepository;
+
+
+    function __construct(ListRepository | null $listRepository = null)
+    {
+        if($listRepository !== null) {
+            $this->listRepository = $listRepository;
+            return;
+        }
+        
+        $this->listRepository = new ListRepository();
+    }
+
+    function displayNewListPage(array $errors = [])
+    {
+        $newListLink = 'text-info';
+        $template = 'list.php';
+        $path = $this->templates . '/' . $template;
+        require_once $path;
+    }
+
+    function processNewListData()
+    {
+        $listName = $_POST['listName'] ?? '';
+        $errors = [];
+
+        if (!empty($listName) && strlen($listName) > 3) {
+            if (empty($this->listRepository->findListByName($listName))) {
+                $this->listRepository->createList($listName);
+                header("Location: /?action=todo&listName=$listName");
+                return;
+            }
+            $errors['listName'] = "Uma lista com nome $listName já existe.";
+        }
+
+        $this->displayNewListPage($errors);
+
+        return;
+    }
+
+    private function loadTasksPage(array $taskList, string $listName, array $errors = [])
+    {
+        $template = 'tasks.php';
+        $path = $this->templates . '/' . $template;
+        require_once $path;
+    }
+
+    function displayNewTasksPage()
+    {
+        $taskList = [];
+        $listName = $_GET['listName'] ?? '';
+
+        if (!empty($listName) && strlen($listName) > 3) {
+            $listData = $this->listRepository->findListByName($listName);
+            if (!empty($listData) && strlen($taskName) > 2) {
+                $id = (int)$listData['id'];
+                $taskList = $this->listRepository->getTasks($id);
+            } else {
+                // Create list first
+                header("Location: /");
+                return;
+            }
+        }
+
+        $this->loadTasksPage($taskList, $listName);
+    }
+
+    function processNewTaskData()
+    {
+        $taskList = [];
+        $taskName = $_POST['taskName'] ?? '';
+        $listName = $_GET['listName'];
+        $errors = [];
+
+        // lista deve existir
+        if (empty($listName) || strlen($listName) < 3) {
+            header("Location: /");
+            return;
+        }
+
+        $listData = $this->listRepository->findListByName($listName);
+
+        // lista deve existir no banco de dados.
+        if (empty($listData)) {
+            header("Location: /");
+            return;
+        }
+
+        $id = (int)$listData['id'];
+
+        if (!empty($taskName)) {
+            if (empty($this->listRepository->findTaskByName($taskName, $id))) {
+                $this->listRepository->createTask($taskName, $id);
+            } else {
+                $errors['taskName'] = "Uma tarefa com esse nome já existe.";
+            }
+        }
+
+        $taskList = $this->listRepository->getTasks($id);
+
+        $this->loadTasksPage($taskList, $listName, $errors);
+    }
+
+
+    function processRemoveTask()
+    {
+        $taskList = [];
+        $listName = $_GET['listName'] ?? '';
+        $id = $_GET['id'];
+
+        if (empty($listName) || empty($id) || strlen($listName) < 3) {
+            header("Location: /?action=todo&listName=$listName&id=$id");
+            return;
+        }
+
+        $listData = $this->listRepository->findListByName($listName);
+        if (empty($listData)) {
+            header("Location: /");
+            return;
+        }
+
+        $list_id = (int)$listData['id'];
+        $task_id = (int)$id;
+        $this->listRepository->deleteTask($task_id, $list_id);
+
+        $taskList = $this->listRepository->getTasks($list_id);
+
+        $this->loadTasksPage($taskList, $listName);
+    }
+
+    function processRemoveList()
+    {
+        $listName = $_GET['listName'] ?? '';
+
+        if (empty($listName)) {
+            header("Location: /?action=lists");
+            return;
+        }
+
+        $this->listRepository->deleteList($listName);
+
+        header("Location: /?action=lists");
+    }
+
+    function processMarkTaskAsDone()
+    {
+        $taskList = [];
+        $id = $_GET['id'] ?? '';
+        $listName = $_GET['listName'] ?? '';
+
+        if (empty($listName) || empty($id)) {
+            header("Location: /?action=todo&listName=$listName&id=$id");
+            return;
+        }
+
+        $listData = $this->listRepository->findListByName($listName);
+
+        if (empty($listData)) {
+            header('Location: /');
+            return;
+        }
+
+        $list_id = (int)$listData['id'];
+        $task_id = (int)$id;
+
+        $taskData = $this->listRepository->findTaskById($task_id);
+
+        if (empty($taskData) || $taskData['list_id'] !== $list_id) {
+            header("Location: /?action=todo&listName=$listName&id=$id");
+            return;
+        }
+
+        // Mark task as done.
+        $taskData['done'] = 1;
+
+        $this->listRepository->updateTask($taskData);
+
+        $taskList = $this->listRepository->getTasks($list_id);
+
+        $this->loadTasksPage($taskList, $listName);
+    }
+
+    function displayListsPage()
+    {
+        $listsLink = 'text-info';
+        $lists = [];
+        $template = "lists.php";
+        $path = $this->templates . '/' . $template;
+
+        $lists = $this->listRepository->getLists();
+
+        foreach ($lists as $key => $list) {
+            $numberOfTasks = $this->listRepository->findNumberOfTasksPerList((int)$list['id']);
+            $lists[$key]['numberOfTasks'] = $numberOfTasks;
+        }
+
+        require_once $path;
+    }
+}
+
+
+Pronto. Salve o arquivo.
+Note que o namespace usa o nome do diretorio que a classe estar, exceto a pasta app que é
+mapeada para App no arquivo composer.json.
+A seguir, incluimos a classe ListRepository que vamos criar em outra pasta.
+As variaveis globais dentro da classe são $templates e $listRepository
+
+a) displayNewListPage()
+A função displayNewListPage() tem a função de exibir a pagina para criar listas de
+tarefas.
+A variavel $newListLink é para exibir o link ativo no cabeçalho da pagina, ou seja
+links de navegação.
+A variavel $template tem o nome do arquivo com o conteudo da pagina (HTML) e
+PHP tambem. nesse caso list.php que tem função de criar listas de tarefas.
+$path - tem o caminho completo desse arquivo e finalmente a pagina é exibida para
+o usuario pelo browser usando require_once, ou seja carregando o arquivo list.php.
+
+
+    function displayNewListPage(array $errors = [])
+    {
+        $newListLink = 'text-info';
+        $template = 'list.php';
+        $path = $this->templates . '/' . $template;
+        require_once $path;
+    }
+
+
+b) processNewListData()
+A função processNewListData() tem a função de checar se o usuario forneceu um nome
+de lista valido, ou seja mais de 3 characteres. A seguir checamos se a lista com
+um nome igual já existe no banco de dados o que inviabiliza a criação da lista. Usamos
+a função findListByName() (encontre lista pelo nome) para esse proposito.
+Se findListByName() retorna nulo, significa que não existe e podemos prosseguir.
+Criamos a lista de tarefas com a função createList() passando o nome da lista como
+argumento. Depois redirecionamos para pagina onde podemos criar tarefas na lista
+recem criada, usando a função header().
+Se a lista já existe, colocamos uma mensagem de error e exibimos a pagina para criar uma
+lista novamente, usando a função criada antes, com uma array contendo erros.
+
+Nota: O que header("Location: /?action=todo&listName=$listName"); faz é redirecionar o browser
+para o endereço http://endereco.servidor:numero-da-porta/ a parte depois de '?' são variaveis.
+Quando o browser ver isso ela vaz uma requisição para o servidor com o endereço e as variavel
+para classe Application, as variavel podem ser acessadas novamente em $_GET. Isso é usado geralmente
+em situações em que existe erros e que extras medidas precisão ser todas.
+
+
+    function processNewListData()
+    {
+        $listName = $_POST['listName'] ?? '';
+        $errors = [];
+
+        if (!empty($listName) && strlen($listName) > 3) {
+            if (empty($this->listRepository->findListByName($listName))) {
+                $this->listRepository->createList($listName);
+                header("Location: /?action=todo&listName=$listName");
+                return;
+            }
+            $errors['listName'] = "Uma lista com nome $listName já existe.";
+        }
+
+        $this->displayNewListPage($errors);
+
+        return;
+    }
+
+c) loadTasksPage()
+A função loadTasksPage() é uma função auxiliar, ou seja uma função para evitar duplicação
+de codigo. Ela serve para carregar a pagina onde podemos criar novas tarefas. Para isso é
+usado o arquivo tasks.php na pasta templates.
+
+Nota: todas a variaveis presentes dentro da função quando voçê usa a declaração "require_once template.php"
+podem ser acessadas a partir de template.php ou nesse caso tasks.php var ter acesso automaticamente as
+variaveis $errors, $listName, $taskList e ate variaveis que não precisa como $template, $path, ...
+
+$taskList - é uma array que contem todas as tarefas da lista representadas pelo nome em $listName.
+$listName - nome da lista de tarefas.
+$errors - mensagens de error, se alguma.
+
+Finalmente carregamos a pagina com "require_once $path".
+
+
+    private function loadTasksPage(array $taskList, string $listName, array $errors = [])
+    {
+        $template = 'tasks.php';
+        $path = $this->templates . '/' . $template;
+        require_once $path;
+    }
+
+
+d) displayNewTasksPage()
+A função displayNewTasksPage() exibe uma lista, previamente criada, com um formulario abaixo para criar tarefas
+A variavel $taskList como antes ajuda a inserir tarefas, já criadas, na pagina.
+O nome da lista é recuperada $_GET e checada para ver se é valida. Então os dados da lista é recuperas do
+banco de dados, usando o nome da lista e a função findListByName() de $listRepository. Os dados da
+lista e checados com a função empty() para ver se a lista realmente existe.
+O id da lista é recuperado como estar no banco de dados e amazenado na variavel $id (id da lista), que é
+então usada para carregar todas as tarefas que pertencem a lista com valor igual a $id, as tarefas são
+colocadas em $taskList array como antes e a mesma pagina é exibida usando a função loadTasksPage().
+Por outro lado, se a lista, com nome em $listName, não for encontrada no banco de dados. redirecionamos
+para a pagina criar lista (header('Location: /').
+
+
+    function displayNewTasksPage()
+    {
+        $taskList = [];
+        $listName = $_GET['listName'] ?? '';
+
+        if (!empty($listName) && strlen($listName) > 3) {
+            $listData = $this->listRepository->findListByName($listName);
+            if (!empty($listData) && strlen($taskName) > 2) {
+                $id = (int)$listData['id'];
+                $taskList = $this->listRepository->getTasks($id);
+            } else {
+                // Create list first
+                header("Location: /");
+                return;
+            }
+        }
+
+        $this->loadTasksPage($taskList, $listName);
+    }
+
+
+e) processNewTaskData()
+A função processNewTaskData() tem a função de processar a criação de novas tarefas, alem de checar se
+o nome da tarefa é valida ou se ja existe uma terefa com mesmo nome no banco de dados.
+
+A descrição da variaveis são as seguintes:
+$taskList - mesmo que antes, ela contem todas as tarefas da lista ($listName) incluindo a nova tarefa sendo
+criada nesse momento.
+$taskName - nome da tarefa ou descrição se preferir.
+$errors - contem erros, se ocorrer.
+$listName - nome da lista
+
+O nome da lista e checado com a função empty(), se not valida, ou seja vazia, ou menor ou igual 3 characters
+redirecionamos para a pagina criar nova lista. Do contrario os dados da lista são recuperados do banco de dados
+com findListByName() e os dados são checados tambem. o ID da lista é salvo na variavel $id e o nome da tarefa
+, $taskName, é checado em if(!empty($taskName) && strlen($taskName) > 2). Se essa declaração é considerada verdadeira,
+ou seja o nome da tarefa é valido que então procedemos com a criação da tarefa no banco de dados.
+Mais antes checamos que a tarefa já não existe com findTaskByName() e passamos $taskName, $id, o ID da lista.
+Se a tarefa não existe, ela é criada com createTask() de listRepository objeto. Mas se a tarefa já existe
+colocamos uma mensagem de erro na array adequada.
+
+Carregamos tadas as tarefas com getTasks() com o ID da lista como argumento. então carregamos a pagina com
+com as tarefas anteriores e a nova tarefa criada usando loadTasksPage().
+
+
+    function processNewTaskData()
+    {
+        $taskList = [];
+        $taskName = $_POST['taskName'] ?? '';
+        $listName = $_GET['listName'];
+        $errors = [];
+
+        // lista deve existir
+        if (empty($listName) || strlen($listName) < 3) {
+            header("Location: /");
+            return;
+        }
+
+        $listData = $this->listRepository->findListByName($listName);
+
+        // lista deve existir no banco de dados.
+        if (empty($listData)) {
+            header("Location: /");
+            return;
+        }
+
+        $id = (int)$listData['id'];
+
+        if (!empty($taskName)) {
+            if (empty($this->listRepository->findTaskByName($taskName, $id))) {
+                $this->listRepository->createTask($taskName, $id);
+            } else {
+                $errors['taskName'] = "Uma tarefa com esse nome já existe.";
+            }
+        }
+
+        $taskList = $this->listRepository->getTasks($id);
+
+        $this->loadTasksPage($taskList, $listName, $errors);
+    }
+
+
+f) processRemoveTask()
+A função processRemoveTask() é responsavel por excluir tarefas do banco de dados.
+Primeiro o ID da tarefa e o nome da lista são salvos nas variaveis $id, $listName, então
+nome da lista e o ID da terefa são testados com empty().
+
+A seguir os dados da lista (uma linha na tabela do banco de dados) são salvos na variavel $listData,
+essa variavel contem uma array associativa com os nomes dos campos na tabela do banco de dados,
+ou seja exatamente como retornado por fetch() metodo da classe PDO. Em outras palavras a array contem
+campos com $listaData['id'], $listData['nome'], vamos criar esses campos mais a frente.
+Uma teste usando a função empty() é executado na variavel $listData para ver se os dados são validos,
+ou seja se a lista existe ou não. Se a lista não existir, essa chamada para a função não deveria acontecer
+então redirecionamos para a pagina criar lista.
+Se os dados estão todos Ok, procedemos com a exclusão da tarefa usando a função deleteTask() com
+$task_id (o ID da tarefa), $list_id (o ID da lista).
+
+Carregamos todas as tarefas usando getTasks() do object $listRepository na variavel $taskList array
+e mostramos a pagina sem a nova tarefa usando loadTasksPage().
+
+   function processRemoveTask()
+    {
+        $taskList = [];
+        $listName = $_GET['listName'] ?? '';
+        $id = $_GET['id'];
+
+        if (empty($listName) || empty($id) || strlen($listName) < 3) {
+            header("Location: /?action=todo&listName=$listName&id=$id");
+            return;
+        }
+
+        $listData = $this->listRepository->findListByName($listName);
+        if (empty($listData)) {
+            header("Location: /");
+            return;
+        }
+
+        $list_id = (int)$listData['id'];
+        $task_id = (int)$id;
+        $this->listRepository->deleteTask($task_id, $list_id);
+
+        $taskList = $this->listRepository->getTasks($list_id);
+
+        $this->loadTasksPage($taskList, $listName);
+    }
+
+
+g) processRemoveList()
+A função processRemoveList() exclui uma lista em vez. Ela age primeiro testando a variavel
+$listName que contem o nome da lista, então remove a lista com deleteList() com nome da lista como argumento.
+Finalmente carregamos as listas restantes com header()
+
+
+    function processRemoveList()
+    {
+        $listName = $_GET['listName'] ?? '';
+
+        if (empty($listName)) {
+            header("Location: /?action=lists");
+            return;
+        }
+
+        $this->listRepository->deleteList($listName);
+
+        header("Location: /?action=lists");
+    }
+
+h) processMarkTaskAsDone()
+Quando uma tarefa é concluida no mundo real, ela precisa ser marcada como tal, portanto precisamos de
+fornecer um jeito de marcar as tarefas criadas como concluidas, nesse caso escolhe mudar a cor para verde
+e passar uma linha atraves do texto, usando CSS, quando a tarefa é exibida na pagina e sinalizar para
+o banco de dados que que a tarefa foi concluida.
+A função processMarkTaskAsDone() tem esse proposito. Primeiro o ID da tarefa é salvo em $id, depois
+o nome da lista em $listName, checadas com empty(). Os dados da lista e salvo em $listData usando a
+função findListByName() para evitar que uma lista diferente modifique tarefas de outra lista.
+Depois que $listData é checada, com empty(), o ID da terefa e salvo em $task_id, e o ID da lista e obtida
+de $listData array. Então uma tentativa de encontrar a tarefa pelo ID é feita com findTaskById() do objecto
+$listRepository, a final não dar para marcar uma tarefa como concluida se ele não existe ainda. Os dados
+da tarefa são salvos na variavel $taskData e então um teste para ver se $taskData é valido, depois um
+teste para ver se o ID da lista corresponde com o ID da lista na tabela de tarefas. Se $taskData é nula
+ou ID da lista não corresponde redirecionamos com a função header() de volta para a pagina onde a requisição
+originou.
+Se os dados estiverem OK $taskData['done'] recebe o valor 1 ou seja done=true, Depois os dados no banco de dados
+são atualizados com os dados de $taskData pela função updateTask().
+Todas as tarefas são carregadas novamente em $taskList com getTasks() e a pagina é recarregada com os dados
+atualizados.
+
+
+    function processMarkTaskAsDone()
+    {
+        $taskList = [];
+        $id = $_GET['id'] ?? '';
+        $listName = $_GET['listName'] ?? '';
+
+        if (empty($listName) || empty($id)) {
+            header("Location: /?action=todo&listName=$listName&id=$id");
+            return;
+        }
+
+        $listData = $this->listRepository->findListByName($listName);
+
+        if (empty($listData)) {
+            header('Location: /');
+            return;
+        }
+
+        $list_id = (int)$listData['id'];
+        $task_id = (int)$id;
+
+        $taskData = $this->listRepository->findTaskById($task_id);
+
+        if (empty($taskData) || $taskData['list_id'] !== $list_id) {
+            header("Location: /?action=todo&listName=$listName&id=$id");
+            return;
+        }
+
+        // Mark task as done.
+        $taskData['done'] = 1;
+
+        $this->listRepository->updateTask($taskData);
+
+        $taskList = $this->listRepository->getTasks($list_id);
+
+        $this->loadTasksPage($taskList, $listName);
+    }
+
+
+i) displayListsPage()
+A função displayListsPage() exibe todas as lista do sistema (banco de dados) para que quando a pagina carregar
+o usuario possa clicar numa lista de tarefas e editar tarefas (excluir, marcar com concluida, ...).
+A função primeiro configura a variavel $listsLink que muda a cor do link ativo na pagina,
+
+$lists - tem a função de armazenar todas as informações da listas, como id, nome.
+$template - nome do template que vai renderizar as listas.
+$path - caminho para o template lists.php
+
+Salvamos todas as listas de um so vez com getLists() em $lists, então vamos atraves de cada lista no
+loop foreach para descobrir o numero de tarefas em cada lista que é armazenada junto com os dados da lista,
+que serão passados para a pagina ou template depois que invocamos require_once $path.
+
+Isso conclui a explicação da classe ListController, a seguir vamos ver ListRepository
+
+    function displayListsPage()
+    {
+        $listsLink = 'text-info';
+        $lists = [];
+        $template = "lists.php";
+        $path = $this->templates . '/' . $template;
+
+        $lists = $this->listRepository->getLists();
+
+        foreach ($lists as $key => $list) {
+            $numberOfTasks = $this->listRepository->findNumberOfTasksPerList((int)$list['id']);
+            $lists[$key]['numberOfTasks'] = $numberOfTasks;
+        }
+
+        require_once $path;
+    }
+
+10. criando a classe ListRepository
+Crie um arquivo com nome ListRepository.php na pasta app/repository com o seguinte conteudo.
+
+<?php
+// app/repository/ListRepository.php
+declare(strict_types=1);
+
+namespace App\repository;
+
+use PDO;
+use PDOException;
+
+class ListRepository {
+    private const MYSQL_DATABASE = 'todolists';
+    private const MYSQL_USER = 'user';
+    private const MYSQL_PASSWORD='password';
+    private const MYSQL_PORT=3306;
+    private const MYSQL_HOST='0.0.0.0';
+    private const LISTS_TABLE = 'lists';
+    private const TASKS_TABLE = 'tasks';
+    private const LISTS_FIELDS = ['id', 'name'];
+    private const TASKS_FIELDS = ['id', 'name', 'list_id', 'done'];
+    private PDO $pdo;
+
+    function __construct(?PDO $connection = null)
+    {
+        if($connection !== null) {
+            $this->pdo = $connection;
+            return;
+        }
+
+        $dsn = "mysql:dbname=" . $this::MYSQL_DATABASE . ";host=" . $this::MYSQL_HOST;
+        $user = "user";
+        $pass = "password";
+
+        try {
+            $this->pdo = new PDO(dsn: $dsn,username:$user, password:$pass );
+        }catch(PDOException $e) {
+            print "Error: " . htmlspecialchars($e->getMessage());
+            die;
+        }
+    }
+
+
+    private function printErrorMessage(string $message) {
+        print "Error: " . htmlspecialchars($message);
+    }
+
+    function createList(string $name) {
+        $sql = "INSERT INTO " . ListRepository::LISTS_TABLE . "(name) VALUES(:name)";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':name', $name);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+
+    function createTask(string $name, int $list_id) {
+        $sql = "INSERT INTO " . $this::TASKS_TABLE . "(name, list_id) VALUES(:name, :list_id)";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":name", $name);
+            $stmt->bindParam(":list_id", $list_id);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+
+    function findListByName(string $name) {
+        $sql = "SELECT * FROM " . $this::LISTS_TABLE . " WHERE name = :name";
+        $list = null;
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":name", $name);
+            $stmt->execute();
+            $list = $stmt->fetch(PDO::FETCH_ASSOC);
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $list;
+    }
+
+    function getTasks(int $list_id) {
+        $sql = "SELECT * FROM " . $this::TASKS_TABLE . " WHERE list_id = :list_id";
+        $tasks = [];
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":list_id", $list_id);
+            $stmt->execute();
+            while($task = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $tasks[] = $task;
+            }
+        }catch(PDOException $e){
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $tasks;
+    }
+
+    function deleteTask(int $id, int $list_id) {
+        $sql = "DELETE FROM " . $this::TASKS_TABLE . " WHERE id = :id AND list_id = :list_id";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':id', $id);
+            $stmt->bindParam(':list_id', $list_id);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+
+    function deleteList(string $listName) {
+        $sql = "DELETE FROM " . $this::LISTS_TABLE . " WHERE name = :name";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":name", $listName);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+
+
+    function findTaskById(int $id) {
+        $sql = "SELECT * FROM " . $this::TASKS_TABLE . " WHERE id = :id";
+        $task = null;
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":id", $id);
+            $stmt->execute();
+            $task = $stmt->fetch(PDO::FETCH_ASSOC);
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $task;
+    }
+
+    function updateTask(array $taskData) {
+        $sql = "UPDATE " . $this::TASKS_TABLE . " SET name = :name, list_id = :list_id, done = :done WHERE id = :id";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':name', $taskData['name']);
+            $stmt->bindParam(':list_id', $taskData['list_id']);
+            $stmt->bindParam(':done', $taskData['done']);
+            $stmt->bindParam(':id', $taskData['id']);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+
+    function getLists() {
+        $sql = "SELECT * FROM " . $this::LISTS_TABLE;
+        $lists = [];
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            $lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $lists;
+    }
+
+    function findNumberOfTasksPerList(int $list_id) {
+        $sql = "SELECT * FROM " . $this::TASKS_TABLE . " WHERE list_id = :list_id";
+        $count = 0;
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":list_id", $list_id);
+            $stmt->execute();
+            $lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if(!empty($lists)) {
+            $count =  count($lists);
+            }else{
+            $count = -1;
+            }
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $count;
+    }
+
+    function findTaskByName(string $taskName, int $list_id) {
+        $sql = "SELECT * FROM " . $this::TASKS_TABLE . " WHERE name = :name AND list_id = :list_id";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":name", $taskName);
+            $stmt->bindParam(":list_id", $list_id);
+            $stmt->execute();
+            $task = $stmt->fetch(pdo::FETCH_ASSOC);
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $task;
+    }
+
+    function cleanUpTables() {
+        $sqlDeleteLists = "DELETE FROM " . $this::LISTS_TABLE;
+        $rebootTasksIdCounter = "ALTER TABLE " . $this::TASKS_TABLE . " AUTO_INCREMENT=0";
+        // CASCADE => $sqlDeleteTasks = "DELETE FROM " . $this::TASKS_TABLE;
+
+        try {
+            $stmt = $this->pdo->prepare($sqlDeleteLists);
+            $stmt->execute();
+            $stmt = $this->pdo->prepare($rebootTasksIdCounter);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+}
+
+Pronto. Salve o arquivo.
+
+A classe ListRepository é responsavel por gerênciar criação,
+atualização, destruição, e pesquisa de dados no banco de dados, para isso
+usamos PDO classe do nucleo de PHP, que centraliza conexão com varios banco de
+dados como mysql, sqlite3, postgresql, etc.
+
+As constantes:
+MYSQL_DATABASE - contem o nome do banco de dados, igual ao nome no arquivo compose.yaml
+MYSQL_USER - nome do usuario
+MYSQL_PASSWORD - senha de 'user'
+MYSQL_POST - porta do servidor mysql
+MYSQL_HOST - endereço do servidor.
+LISTS_TABLE - nome da tabela de listas de tarefas.
+TASKS_TABLE - nome da tabela de tarefas.
+LISTS_FIELDS - nome dos campos, ou coluna na tabela LISTS_TABLE
+TASKS_FIELDS - nome das colunas, ou campos na tabela de tarefas
+
+$pdo - variavel que contem a conexão com o banco de dados, MySQL, para que não
+precisamos reinicia-la toda vez.
+
+a) __construct()
+A função __construct() é construtor que estabeleçe uma conexão com o banco de dados assim
+que uma instancia da classe é criada. passamos o nome do banco de dados e o endereço
+IP do servidor na variavel $dsn para PDO classe, alem disso, tambem passamos o usuario,
+e a senha.
+Se uma exceção for lançada, imprimimos uma mensagem de erro e terminamos o processo.
+Tambem caracteres especiais (<,&,etc.) são tratados adequadamente com a função
+htmlspecialchars().
+
+    function __construct()
+    {
+        $dsn = "mysql:dbname=" . $this::MYSQL_DATABASE . ";host=" . $this::MYSQL_HOST;
+        $user = "user";
+        $pass = "password";
+
+        try {
+            $this->pdo = new PDO(dsn: $dsn,username:$user, password:$pass );
+        }catch(PDOException $e) {
+            print "Error: " . htmlspecialchars($e->getMessage());
+            die;
+        }
+    }
+
+
+b) printErrorMessage()
+A função printErrorMessage() simplesmente mostra um mensagem de error no browser, quando
+uma falha ocorre num processo para acessar o banco de dados.
+
+c) createList(string $name)
+O method createList() cria uma lista, ou uma entrada na tabela 'lists' com o nome
+da lista em $name variavel.
+um comando ou declaração ou sql query é salva em $sql variavel para poder inserir a nova lista
+no banco de dados.
+Dentro de um try bloco usamos prepare() metodo da variavel $pdo para preparar para o passo seguinte,
+que é inserir o nome da lista, $name, no sql comando ou query de forma segura. Para isso a função
+bindParam() é chamado com o nome do guardador de lugar (:name) e o nome da lista.
+A seguir executamos de fato o comando, que é enviado para o banco de dados.
+Se uma exceção ocorre nesse processo, nos capturamos e imprimimos uma mensagem que vai para o
+browser, em seguida terminamos o processo.
+Do contrario uma nova entrada na tabela lists e criada.
+
+    function createList(string $name) {
+        $sql = "INSERT INTO " . ListRepository::LISTS_TABLE . "(name) VALUES(:name)";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':name', $name);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+
+d) createTask(string $name, int $list_id)
+O metodo createTask() é responsavel por criar um tarefa na tabela 'tasks' usando o nome
+da tarefa e o ID da lista que a tarefa pertençe.
+Um SQL query ou comando é salvo na variavel $sql com guardadores de lugar para nome da tarefa,
+:name, e o id da lista, :list_id, esse nome de guardador, placeholders, deve corresponder com
+os nomes das colunas na tabela em questão, nesse case 'tasks'.
+Dentro do bloco 'try' preparamos o comando e salvamos em $stmt (statement), então substituimos
+os guardadores de lugar, placeholders, com o valor que queremos inserir na tabela tasks usando
+bindParam() como antes. finalmente o comando é executado com o metodo execute().
+Capturamos as exceções em 'catch' para exibir uma mensagem de error adequada e terminar de forma
+limpa.
+
+    function createTask(string $name, int $list_id) {
+        $sql = "INSERT INTO " . $this::TASKS_TABLE . "(name, list_id) VALUES(:name, :list_id)";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":name", $name);
+            $stmt->bindParam(":list_id", $list_id);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+
+
+e) findListByName(string $name)
+O metodo findListByName() é responsavel por achar uma lista, no banco de dados, por nome.
+Salvamos o comando para ser executado no banco de dados em $sql. Desta vez vamos pesquisar
+então o comando é SELECT, para achar o alvo, usamos WHERE name = : name (ONDE nome = :nome),
+ou seja a tradução desse comando é 'encontre todas as listas com nome igual ao guardador de
+lugar :name e inclua todas as colunas no resultado (*)'.
+Dentro do bloco try, preparamos o comando para bindParam(), então substituimos :name com
+$name chamando bindParam().
+O primeiro resultado, se hover, é recuperado com fetch() metodo e armazenado em $list
+que retornaremos para o chamador de findListByName(). Nesse caso apenas a primeira é
+retornada porque não esperamos que existam mais de uma, o que é proibido.
+Se não existir uma lista com nome em $name nulo ou false sera retornado.
+Em fetch() usamos PDO::FETCH_ASSOC para indicar que queremos que fetch() retorne uma
+array associativa, por exemplo: ['nome' => 'valor'].
+Se uma exceção for lançada ela é capturada em catch e uma mensagem de erro sera exibida
+no browser e o processo inteiro, sera terminado, (die = morra).
+Se a operação terminar com sucesso em try retornamos o nome da lista em $list. Se a lista não existir
+no banco de dados, retornamos false ou nulo na variavel $list.
+
+
+    function findListByName(string $name) {
+        $sql = "SELECT * FROM " . $this::LISTS_TABLE . " WHERE name = :name";
+        $list = null;
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":name", $name);
+            $stmt->execute();
+            $list = $stmt->fetch(PDO::FETCH_ASSOC);
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $list;
+    }
+
+
+f) getTasks()
+A função getTasks(), metodo na verdade, carrega toda a tabela de uma so vez em $tasks array.
+A declaração em $sql faz isso. Ela encontra todas as tarefas de uma lista, usando o id da lista
+e o nome da tabela na constante TASKS_TABLE.
+No bloco try preparamos o comando e inserimos o id da lista usando bindParam(). Depois
+de executar o comando, com execute(), usamos um while loop e o metodo fetch() para
+salvar os dados de cada tarefa em $tasks. Tambem poderiamos usar o metodo fetchAll() aqui
+daria no mesmo resultado.
+Se uma exceção for lançada, capturamos com catch, para tratar do erro.
+Se hover tarefas com coluna list_id igual a $list_id elas serão retornadas em $tasks, se não hover
+uma array fazia sera retornada.
+
+
+    function getTasks(int $list_id) {
+        $sql = "SELECT * FROM " . $this::TASKS_TABLE . " WHERE list_id = :list_id";
+        $tasks = [];
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":list_id", $list_id);
+            $stmt->execute();
+            while($task = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $tasks[] = $task;
+            }
+        }catch(PDOException $e){
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $tasks;
+    }
+
+
+g) deleteTask()
+O metodo deleteTask() deve ser chamada com o id da tarefa, $id, e o id da lista, $list_id para
+poder excluir um tarefa do banco de dados.
+O comando DELETE em $sql, mais o nome da tabela 'tasks' e o filtro, WHERE, são responsaveis por
+excluir a tarefa.
+No bloco try, depois de preparar o comando, substituimos :id com o id da tarefa e :list_id com
+o id da lista usando bindParam(), depois a operação é executada com execute().
+
+    function deleteTask(int $id, int $list_id) {
+        $sql = "DELETE FROM " . $this::TASKS_TABLE . " WHERE id = :id AND list_id = :list_id";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':id', $id);
+            $stmt->bindParam(':list_id', $list_id);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+
+
+h) deleteList()
+O metodo deleteList() remove listas do banco de dados usando seu nome, $listName, DELETE é
+usado como antes, assim como WHERE para filtrar a exclusão para apenas uma lista, se essa parte
+não for inserida, todas as entradas serão removidas.
+O bloco try é como antes, insere o nome da lista, $listName, no comando e execute. Mensagem de
+erros são capturadas e exibidas.
+
+    function deleteList(string $listName) {
+        $sql = "DELETE FROM " . $this::LISTS_TABLE . " WHERE name = :name";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":name", $listName);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+
+
+i) findTaskById()
+O metodo findTaskById() recebe o id de uma tarefa e pesquisa no banco de dados, usando SELECT
+e WHERE para filtrar a tarefa desejada, se ela existir!
+No bloco try inserimos o id da tarefa no comando e enviamos para MySQL com execute().
+O resultado, os dados da tarefa ou false, e retornado de volta na variavel $task.
+o metodo fetch() do objeto $stmt retorna uma array com os dados da tarefa, se uma for encontrada.
+
+    function findTaskById(int $id) {
+        $sql = "SELECT * FROM " . $this::TASKS_TABLE . " WHERE id = :id";
+        $task = null;
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":id", $id);
+            $stmt->execute();
+            $task = $stmt->fetch(PDO::FETCH_ASSOC);
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $task;
+    }
+
+l) updateTask(array $taskData)
+O metodo updateTask muda todas as colunas na tabela 'tasks' que casa com o id da tarefa em
+$taskData['id'], a unica exceção e a coluna id da tabela tasks, porque estamos atualizando, não criando
+uma nova entrada, alem do mais, a coluna id é automaticamente incrementada.
+O comando UPDATE modifica os dados usando o sub-comando SET e os nomes das colunas separadas por virgula. o filtro
+"WHERE id = :id" certifica que não vamos atualizar toda a tabela.
+O resto é como antes, a diferença é que os dados estão na array $taskData.
+Essa função é usada em ListController classe para marcar uma tarefa um como concluida, ou seja done=1 ou
+done=true.
+
+    function updateTask(array $taskData) {
+        $sql = "UPDATE " . $this::TASKS_TABLE . " SET name = :name, list_id = :list_id, done = :done WHERE id = :id";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':name', $taskData['name']);
+            $stmt->bindParam(':list_id', $taskData['list_id']);
+            $stmt->bindParam(':done', $taskData['done']);
+            $stmt->bindParam(':id', $taskData['id']);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+
+m) getLists()
+O metodo getLists() é responsavel por carregar todas as listas, nomes, ids, etc.
+Usando SELECT * nome-da-tabela, os dados são armazenados em $lists array, o try bloco
+pega todas as listas de uma fez com o metodo fetchAll() do objeto $stmt. Se não hover erros
+os dados serão retornados. Se hover uma mensagem de erro sera exibida.
+
+    function getLists() {
+        $sql = "SELECT * FROM " . $this::LISTS_TABLE;
+        $lists = [];
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            $lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $lists;
+    }
+
+n) findNumberOfTasksPerList(int $list_id)
+O metodo findNumberOfTasksPerList() retorna o numero de tarefas na lista com o
+id igual a $list_id. Para tanto ela usa a função count() dentro do bloco try
+para armazenar o numero de tarefas em $count, que é retornada depois.
+Se um error ocorre medidas adequadas são tomas em try ou catch blocos.
+
+    function findNumberOfTasksPerList(int $list_id) {
+        $sql = "SELECT * FROM " . $this::TASKS_TABLE . " WHERE list_id = :list_id";
+        $count = 0;
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":list_id", $list_id);
+            $stmt->execute();
+            $lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if(!empty($lists)) {
+            $count =  count($lists);
+            }else{
+            $count = -1;
+            }
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $count;
+    }
+
+o) findTaskByName(string $taskName, int $list_id)
+A função findTaskByName() encontra tarefas pelo nome da tarefa e o id da lista. Para tanto
+usamos SELECT e WHERE para filtra as linhas (records) que queremos.
+AND e usado aqui para indicar que tanto o nome da tarefa (name coluna), quanto o id da lista (list_id)
+devem casar (match) ao mesmo tempo.
+Depois que a variavel $sql é montada e inserimos os dados no comando com bindParam() no bloco try,
+executamos o comando com execute(). Depois salvamos o resultado em $task que é retornada de volta.
+
+    function findTaskByName(string $taskName, int $list_id) {
+        $sql = "SELECT * FROM " . $this::TASKS_TABLE . " WHERE name = :name AND list_id = :list_id";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":name", $taskName);
+            $stmt->bindParam(":list_id", $list_id);
+            $stmt->execute();
+            $task = $stmt->fetch(pdo::FETCH_ASSOC);
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+
+        return $task;
+    }
+
+p) cleanUpTables()
+O metodo cleanUpTables() remove todos os dados nas tabelas 'tasks' e 'lists' para prevenir que os testes
+com selenium, e phpunit falhem quando não deviam.
+Na verdade cleanUpTables() apenas remove os dados na tabela 'lists' MySQL remove os dados em 'tasks' porque
+vamos usar referencias na tabela 'tasks' para a tabela 'lists', o que causa a exclusão automatica em 'tasks'.
+Isso sera mostrado quando criarmos as funções que criaram o banco de dados e as tabelas em createDatabase.php.
+$sqlDeleteLists - é o comando que exclui os dados na tabela 'lists'.
+$rebootTasksCounter - reinicia o id da tabela 'tasks' de volta para o numero 1.
+Quando removemos os dados no primeiro $stmt->execute() em cleanUpTables() os dados em 'tasks' tambem são
+removidos automaticamente (ON DELETE CASCADE). Depois preparamos o comando com
+$stmt->pdo->prepare($rebootTasksIdCounter) para reiniciar o id depois de executar com execute().
+
+    function cleanUpTables() {
+        $sqlDeleteLists = "DELETE FROM " . $this::LISTS_TABLE;
+        $rebootTasksIdCounter = "ALTER TABLE " . $this::TASKS_TABLE . " AUTO_INCREMENT=0";
+        // CASCADE => $sqlDeleteTasks = "DELETE FROM " . $this::TASKS_TABLE;
+
+        try {
+            $stmt = $this->pdo->prepare($sqlDeleteLists);
+            $stmt->execute();
+            $stmt = $this->pdo->prepare($rebootTasksIdCounter);
+            $stmt->execute();
+        }catch(PDOException $e) {
+            $this->printErrorMessage($e->getMessage());
+            die;
+        }
+    }
+
+11. Criando o arquivo createDatabase.php
+Crie o arquivo createDatabase.php na pasta scripts com o seguinte conteudo.
+
+<?php
+// scripts/createDatabase.php
+declare(strict_types=1);
+
+function createDatabase() {
+    $sql = "CREATE DATABASE IF NOT EXISTS todolists";
+
+    try {
+        $pdo = new PDO(dsn:"mysql:host=0.0.0.0", username:"user", password: "password");
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+    }catch(PDOException $e) {
+        print_r($e);
+        exit(1);
+    }
+}
+
+
+function createTableLists() {
+    $sql = "CREATE TABLE IF NOT EXISTS lists(id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(150))";
+
+    try {
+        $pdo = new PDO(dsn: "mysql:dbname=todolists;host=0.0.0.0", username: "user", password:"password");
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+    }catch(PDOException $e) {
+        print_r($e);
+        exit(1);
+    }
+}
+
+function createTableTasks() {
+    $sql = "CREATE TABLE IF NOT EXISTS tasks(
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255), list_id INT,
+            done BOOLEAN NOT NULL DEFAULT FALSE,
+            FOREIGN KEY (list_id) REFERENCES lists(id) ON DELETE CASCADE
+            )";
+
+    try {
+        $pdo = new PDO("mysql:dbname=todolists;host=0.0.0.0", "user", "password");
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+    }catch(PDOException $e) {
+        print_r($e);
+        exit(1);
+    }
+}
+
+createDatabase();
+createTableTasks();
+createTableLists();
+
+Pronto. Salve o arquivo.
+Esse arquivo contem funções que criam o banco de dados (todolists) e as tabelas (tasks, lists)
+que nosso app precisa. A ordem é importante aqui. Primeiro criar o banco de dados, depois as tebelas
+lists, tasks
+
+a) createDatabase()
+A função createDatabase() cria o banco de dados 'todolists' no servidor MySQL
+usando o comando CREATE se o banco de dados já não existir. A variavel $sql contem o comando
+que cria o banco de dados.
+
+No bloco try, criamos um instancia da classe PDO com o parametro dsn contendo mysql e o endereco do servidor.
+Note que o nome do banco de dados não esta presente em dsn, simplesmente porque ainda não criamos o banco de
+dados, tambem passamos nome de usuario e senha para o construtor da classe PDO.
+O banco de dados é criado com a execução do metodo execute().
+Se hover algum erro, imprimimos no terminal on print_r para solucionar o problema.
+
+function createDatabase() {
+    $sql = "CREATE DATABASE IF NOT EXISTS todolists";
+
+    try {
+        $pdo = new PDO(dsn:"mysql:host=0.0.0.0", username:"user", password: "password");
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+    }catch(PDOException $e) {
+        print_r($e);
+        exit(1);
+    }
+}
+
+b) createTableLists()
+A função createTableLists() cria a tabela lists no banco de dados todolists usando um comando como o anterior.
+A variavel $sql contem a string com o comando para criar a tabela se ela já não existir.
+Os campos ou colunas da tabela lists são primeiro o id do tipo numero inteiro. AUTO_INCREMENT PRIMARY KEY
+garantem que o id da lista sejam unicos e criados automaticamente quando dados, ou nomes de listas forem
+inseridos na tabela. A coluna 'name' é o nome da lista com comprimento maximo de 150 caracteres.
+No bloco try instanciamos um objeto da classe PDO e salvamos em $pdo, dessa vez incluimos o nome do banco de dados
+no argumento dsn da classe PDO, como antes o nome de usuario e a senha tambem são passados.
+Finalmente a tabela é criada com $stmt->execute().
+Mensagem de erro são imprimidas no terminal.
+
+
+function createTableLists() {
+    $sql = "CREATE TABLE IF NOT EXISTS lists(id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(150))";
+
+    try {
+        $pdo = new PDO(dsn: "mysql:dbname=todolists;host=0.0.0.0", username: "user", password:"password");
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+    }catch(PDOException $e) {
+        print_r($e);
+        exit(1);
+    }
+}
+
+c) createTableTasks()
+Cria a tabela 'tasks' para armazenar tarefas, ou dados das tarefas. Essa tabela tem mais campos que a
+anterior, mas é bem simples.
+Primeiro criamos a declaração SQL para criar a tabela. Os Nomes da colunas como a seguir:
+id - inteiro, unico ou seja sem duplicatas, automaticamente criados e indexados.
+name - nome da tarefa, comprimento maximo 255 caracteres.
+list_id - id da lista na tabela lists tambem universalmente unico na tabela lists.
+done -  boolean, na verdade os numeros inteiros 0 ou 1.
+FOREIGN KEY (list_id) REFERENCES lists(id) ON DELETE CASCADE - não é uma coluna, é um tipo de
+indice que aponta para a tabela 'lists'. Vamos dividir isso em partes:
+FOREIGN KEY(list_id) - torna list_id, o id da lista em um indice.
+REFERENCES lists(id) - diz que coluna na tabela lists o indice lists_id referencia, nesse caso
+a coluna é o id da tabela lists.
+ON DELETE CASCADE - que dizer quando uma lista com id igual list_id na tabela tasks for
+excluida MySQL deve excluir todas as tarefas na tabela tasks com o correspondente list_id.
+
+No bloco try criamos uma instancia da classe PDO como antes e criamos a tabela com
+$stmt->execute(). Se hover erros, então são imprimidos no terminal, como antes.
+
+createTableTasks() {
+    $sql = "CREATE TABLE IF NOT EXISTS tasks(
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255),
+            list_id INT,
+            done BOOLEAN NOT NULL DEFAULT FALSE,
+            FOREIGN KEY (list_id) REFERENCES lists(id) ON DELETE CASCADE
+            )";
+
+    try {
+        $pdo = new PDO("mysql:dbname=todolists;host=0.0.0.0", "user", "password");
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+    }catch(PDOException $e) {
+        print_r($e);
+        exit(1);
+    }
+}
+
+d) Executando as funções.
+Essa parte executa as funções criadas anteriormente.
+
+createDatabase();
+createTableTasks();
+createTableLists();
+
+Para concluir, na linha de comando e na pasta raiz do projeto, onde esta compose.yaml, etc.
+Execute os seguintes comandos:
+Nota: se docker não estiver executando, use $ sudo systemctl start docker
+
+
+$ docker-compose down
+limpa containers que possa existir anteriormente
+
+$ docker-compose up -d
+inicia o servidor mysql no container
+
+$ php scripts/createDatabase.php
+criar o banco de dados e as tabelas tasks, lists com o script de antes.
+
+$ docker-compose exec db mysql -u user -ppassword
+para conectar com mysql dentro do container.
+
+
+12. Criando templates para gerar as paginas.
+Crie o arquivo head.php na pasta templates com o seguinte conteudo:
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body > main:first-of-type {
+            min-height: 95vh;
+            padding-bottom: 2rem;
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+        }
+
+        .task-done {
+            text-decoration: line-through;
+            color: green;
+        }
+
+        .title {
+            text-transform: capitalize;
+            color: darkorchid;
+            padding-block: 1rem;
+        }
+
+        .hover:hover {
+            opacity: 0.7;
+        }
+
+        #newTaskForm {
+            padding-block: 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+    </style>
+</head>
+
+Pronto. Salve o arquivo.
+E o elemento HTML <head> contendo o titulo da pagina, um link elemento para incluir bootstrap CSS
+framework para tornar a pagina estilizada de forma fácil. O elemento <style> contem CSS codigo
+para aplicar em todas as paginas.
+A razão de de ter divido as paginas muitos arquivos é para manter-las consistentes uma com a outra.
+Uma breve explicação do CSS no elemento head estar a seguir:
+
+a) * { box-sizing: border-box; margin: 0; padding: 0;  } - Isso e aplicado a todos os elementos na pagina,
+ é o que o asterisco faz.
+
+b) .task-done { text-decoration: line-through; color: green; } - a classe task-done sera usada para
+mostrar visualmente que uma tarefa estar completada. O que isso faz é passar um linha atraves no texto ou
+nome da tarefa e depois muda a color do texto para verde.
+
+c) .hover:hover { opacity: 0.7; } - quando esse classe é aplicada a um elemento ela reduz a opacidade
+do elemento para 70% quando o mouse passa sobre o elemento.
+
+
+13. Criando header.php template.
+O codigo a seguir sera compartilhado por todas as paginas usando require_once :
+Crie um arquivo chamado header.php na pasta templates como antes com o seguinte conteudo:
+
+<header class="container-fluid bg-dark text-white-50">
+    <div class="row p-1">
+        <div id="logo" class="col-2 p-0 m-0 ms-4 text-warning">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0m0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0m0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0" />
+            </svg>
+        </div>
+        <div class="d-flex justify-content-end fw-bold col-4 ">
+            <h1 class="fw-bold title mb-0">Todo</h1>
+        </div>
+    </div>
+    <nav class="navbar navbar-expand-sm m-0 p-0 fw-bold">
+        <ul class="nav">
+            <li class="nav-item">
+                <a href="/" class="nav-link <?= $newListLink ?? '' ?>">
+                    Nova Lista
+                </a>
+            </li>
+            <?php if (!empty($listName)): ?>
+                <li class="nav-item">
+                    <a href="/?action=todo" class="nav-link text-info">
+                        Tarefas
+                    </a>
+                </li>
+            <?php endif; ?>
+            <li class="nav-item">
+                <a href="/?action=lists" class="nav-link <?= $listsLink ?? '' ?>">
+                    Listas
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+Pronto. Salve o arquivo.
+
+header elemento contem primeiramente algumas classe de bootstrap que tem os seguintes significados:
+bg-dark - é equivalente a background-color: black, ou seja deixa o funda preto.
+text-white-50 - cor do texto branco com 50% de transparência, ou opacidade.
+
+Em seguida, dentro de <header>, tem uma div elemento que contem a imagem de logo, e o titulo da pagina
+com a classes row p-1, row significar manter o conteudo do div em uma linha, p-1 é 'padding' que vai de
+1 ate 5, ou seja p-1, p-2,...,p-5, assim como m-1,..., para margin.
+Dentro do div outro dois divs, o primeiro com id="logo" contem a imagem de logo, SVG do site bootstrap icons
+(https://icons.getbootstrap.com/) ,o segundo div contem o titulo da pagina.
+as classes col-2 significa para ocupar 2 colunas, col-4 significa ocupar 4 colunas, as colunas vão 1 a 12.
+Nesse caso usamos 6 colunas de 12.
+
+ <div class="row p-1">
+        <div id="logo" class="col-2 p-0 m-0 ms-4 text-warning">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0m0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0m0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0" />
+            </svg>
+        </div>
+        <div class="d-flex justify-content-end fw-bold col-4 ">
+            <h1 class="fw-bold title mb-0">Todo</h1>
+        </div>
+    </div>
+
+O proximo elemento dentro do elemento header é nav, que contem os links de navegação.
+Um link para criar listas, um para ver todas as listas, e um dinamico que aparece
+quando estiver editado uma lista, ou seja inserindo tarefas numa lista, excluindo, etc.
+$newListLink - torna o texto 'Nova Lista' azul claro (cyan) "quando definida" usando text-info.
+$listsLink - faz o mesmo com o link 'Listas'
+O link Tarefas o sera exibido se $listName estiver defina, ou existir. Isso so acontece quando
+uma nova lista é criada, ou voçê clica no nome de uma lista em 'Listas' tab.
+As classes navbar e nav-expand-sm são usadas para os links parecer interessantes!
+Tambem é preciso aplicar nav classe ao element ul, nav-item ao li elemento, e nav-link aos
+links para isso funcionar.
+
+ <nav class="navbar navbar-expand-sm m-0 p-0 fw-bold">
+        <ul class="nav">
+            <li class="nav-item">
+                <a href="/" class="nav-link <?= $newListLink ?? '' ?>">
+                    Nova Lista
+                </a>
+            </li>
+            <?php if (!empty($listName)): ?>
+                <li class="nav-item">
+                    <a href="/?action=todo" class="nav-link text-info">
+                        Tarefas
+                    </a>
+                </li>
+            <?php endif; ?>
+            <li class="nav-item">
+                <a href="/?action=lists" class="nav-link <?= $listsLink ?? '' ?>">
+                    Listas
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+
+
+
+ 14. Criando o template da pagina para criar listas.
+ Crie um arquivo chamado list.php na pasta templates com o seguinte conteudo.
+
+ <!-- templates/list.php -->
+ <!DOCTYPE html>
+ <html lang="en">
+ <?php require_once 'head.php' ?>
+
+ <body>
+     <?php require_once 'header.php'; ?>
+     <main class="container bg-light">
+         <h2 class="title">Listas de tarefas</h2>
+         <hr class="mb-5" />
+         <p class="fs-4 text-secondary">
+             <i>
+                 &OpenCurlyQuote;
+                 Crie listas com nome significativos para ajudar a lembrar seu propósito.
+                 &OpenCurlyQuote;
+             </i>
+         </p>
+         <form action="/?action=process-new-list" id="newListForm" method="post">
+             <div class="row align-items-center fs-4">
+                 <div class="col-3 d-flex justify-content-end">
+                     <label id="listNameLabel" for="listName" class="form-label fw-bold text-secondary">Nome da lista</label>
+                 </div>
+                 <div class="col-6">
+                     <input name="listName" id="listName" class="form-control form-control-lg" required placeholder="Entre nome da lista..." />
+
+                 </div>
+
+                 <div class="col-2">
+                     <button type="submit" id="submitButton" class="btn btn-dark btn-lg col">Criar</button>
+                 </div>
+             </div>
+
+             <?php if (isset($errors['listName'])): ?>
+                 <div class="row align-items-center">
+                     <div class="col-3"></div>
+                     <small class="col text-danger"><?= $errors['listName'] ?></small>
+                 </div>
+             <?php endif; ?>
+         </form>
+     </main>
+     <?php require_once 'footer.php'; ?>
+ </body>
+
+ </html>
+
+ Pronto. Salve o arquivo.
+
+Esse é a primeira pagina completa, Ele começa com cabeçalho padrão HTML, em seguida o comando
+  <?php require_once 'head.php' ?> que carrega o elemento head nesse exato local dentro da pagina.
+
+Dentro de body elemento encontramos  <?php require_once 'header.php'; ?> que incluir o header elemento que
+criamos antes nessa exata posição dentro do arquivo.
+
+O main elemento e onde incluimos o conteudo da pagina, a classe container de main centraliza o elemento na pagina,
+a outra bg-light torna o fundo cinza claro. Dentro do elemento main tem o titulo do conteudo da pagina, uma linha
+horizontal é incluida com o elemento hr, depois um paragrafo com instrução para cria nomes de listas.
+
+O essencial é o form elemento da pagina em <form action="/?action=process-new-list" id="newListForm" method="post">
+que sera usado para criar listas no banco de dados. o metodo é POST e sera encaminhado para /, a a variavel action
+sera enviado via GET, depois do '?' o id do elemento sera usado por selenium para criar listas durante os testes.
+
+Depois o importante é o elemento input com atributos name="listName" que sera acessados em
+ListController ($_POST['listName']) e  id="listName" por selenium depois.
+
+O botão para enviar os dados <button type="submit" id="submitButton" class="btn btn-dark btn-lg col">Criar</button>
+o id "submitButton" tambem serão usados por selenium.
+
+Erros serão exibidos usando o seguinte:
+
+<?php if (isset($errors['listName'])): ?>
+     <div class="row align-items-center">
+         <div class="col-3"></div>
+            <small class="col text-danger"><?= $errors['listName'] ?></small>
+     </div>
+ <?php endif; ?>
+
+Basicamente erros relacionados com nome da lista no input elemento, o unico a proposito.
+A array $errors foi mostrada antes, ele fica vaziam se não over errors.
+
+
+
+
+ 15. Criando a pagina para mostar todas as listas criadas
+ Crie um arquivo com nome lists.php, com 's' plural de list, na pasta templates como os outros
+ templates, é claro.
+ Insira o seguinte conteudo:
+
+ <?php
+ $lists = $lists ?? [];
+ ?>
+
+ <!DOCTYPE html>
+ <html lang="en">
+ <?php require_once 'head.php'; ?>
+
+ <body>
+     <?php require_once 'header.php'; ?>
+     <main class="container bg-light">
+         <h2 class="title">Listas</h2>
+         <hr class="mb-4" />
+
+         <section>
+             <ul id="lists" class="list-group mx-5">
+                 <?php if (empty($lists)): ?>
+                     <h3 class="text-info"><i>Não existe nenhuma lista.<i></h3>
+                 <?php endif; ?>
+                 <?php foreach ($lists as $list): ?>
+                     <li class="list-group-item text-secondary py-2">
+                         <div class="row p-2 align-items-center">
+                             <a href="/?action=todo&listName=<?= $list['name'] ?>" class="nav-link col-11">
+                                 <span class="hover fs-3 col"><?= $list['name'] ?></span>
+                             </a>
+                             <a href="/?action=remove-list&listName=<?= $list['name'] ?>" class="col-1 text-danger">
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-dash-square" viewBox="0 0 16 16">
+                                     <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                     <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8" />
+                                 </svg>
+                             </a>
+                         </div>
+                         <small><i class="text-warning">Número de tarefas: </i>0<?= $list['numberOfTasks'] ?></small>
+
+                     </li>
+                 <?php endforeach; ?>
+             </ul>
+         </section>
+     </main>
+     <?php require_once 'footer.php'; ?>
+ </body>
+
+ </html>
+
+ Pronto. Salve o arquivo.
+
+ Para impedir que o IDE reclame da variavel $lists não ser declarada no arquivo incluimos isso no inicio do
+ arquivo:
+
+ <?php
+ $lists = $lists ?? [];
+ ?>
+
+ O ?? é o coalesce operator, ou seja se a variavel que vem antes do operador não for definida os for nulo
+ o operador usa o valor que vem depois, muito pratico.
+ A variavel $lists é injetada pela classe ListController e contem as informações de todas as listas no sistema,
+ como nome, numero de tarefas, id.
+
+ Importamos o conteudo dos arquivos head.php, header.php e footer.php dentro da pagina usando
+ <?php require_once 'nome-do-arquivo' ?> para evitar duplicação alem de inconsistência entre as paginas.
+
+ Dentro do elemento <ul> incluimos as informações das listas usando um loop foreach, o nome da
+ lista, o numero de tarefas, um link em volta do nome da lista para exibir as tarefas da listas e poder
+ incluir mais, seguido por outro link com uma imagem SVG para excluir a lista. É importante notar a
+ presença do atributo href nos links como action=remove-list&listName=nome-da-lista ou
+ action=todo&listName=nome-da-lista que serão interpretados na função init() da classe Application
+ para remover a lista e carregar as pagina tasks.php com nome da lista como titulo e todas as tarefas
+ respetivamente.
+
+Variaveis de codigo PHP são incluidas dentro de HTML usando <?= $var ?> ou <?php ?> nesse caso voçê de
+terminar com ?>.
+
+A classe row de bootstrap como em <div class="row p-2 align-items-center"> divide uma linha em 12 colunas
+iguais que podemos distribuir com col-1, col-2 ..., col-12 nos elementos descendentes do elemento com a
+classe, quanto mais colunas, mais espaço o elemento vai ocupar.
+
+
+
+
+ 16. Criando o rodape da pagina
+ Crie o arquivo footer.php na pasta templates com o seguinte conteudo.
+
+ <footer class="fixed-bottom bg-dark text-white-50 p-2">&copy; 2026 All Rights Reserved.</footer>
+
+ Pronto. Salve o arquivo.
+
+ É apenas uma linha mais contem bootstrap CSS para fixar na parte de baixo da tela (bottom), ...
+
+
+
+
+ 17. Criando a pagina para criar tarefas
+ Crie um arquivo chamado tasks.php na pasta templates com o conteudo a seguir:
+
+ <?php
+ $taskList = $taskList ?? [];
+ $listName = $listName ?? 'Unknown';
+
+ ?>
+
+ <!DOCTYPE html>
+ <html lang="en">
+ <?php require_once 'head.php'; ?>
+
+ <body>
+     <?php require_once 'header.php'; ?>
+     <main class="container bg-light">
+         <h2 class="text-center title"><?= $listName ?></h2>
+         <hr class="mb-5" />
+
+         <form action="/?action=process-new-task&listName=<?= $listName ?>" method="post" id="newTaskForm">
+             <div class="row align-items-center">
+                 <div class="col-3 fs-5 fw-bold d-flex justify-content-end">
+                     <label id="taskNameLabel" class="form-label" for="taskName">Insira tarefa:</label>
+                 </div>
+                 <div class="col-5">
+                     <input name="taskName" id="taskName" class="form-control" required minlength="3" placeholder="Entre uma tarefa..." />
+                 </div>
+
+                 <div class="col-2">
+                     <button type="submit" class="btn btn-dark px-5" id="submitButton">Add</button>
+                 </div>
+             </div>
+             <?php if (isset($errors['taskName'])): ?>
+                 <div class="row align-items-center">
+                     <div class="col-3"></div>
+                     <small class="text-danger col"><?= $errors['taskName'] ?></small>
+                 </div>
+             <?php endif; ?>
+         </form>
+
+         <section id="taskListSection">
+             <ul class="list-group text-secondary fs-4" id="tasksList">
+                 <?php foreach ($taskList as $task): ?>
+                     <li class="row align-items-center mb-1">
+                         <div class="col-2 row justify-content-center">
+                             <a href="/?action=remove-task&id=<?= $task['id'] ?>&listName=<?= $listName ?>" class="col-4 text-danger" title="Excluir tarefa">
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="28" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
+                                     <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                                 </svg>
+                             </a>
+                             <a href="/?action=task-done&id=<?= $task['id'] ?>&listName=<?= $listName ?>" class="text-success col-4" title="Marcar tarefa como concluida">
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="28" fill="currentColor" class="bi bi-check-square" viewBox="0 0 16 16">
+                                     <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                                     <path d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z" />
+                                 </svg>
+                             </a>
+                         </div>
+                         <p class="col-10 m-0 <?= $task['done'] == '1' ? 'task-done' : '' ?>">
+                             <?= $task['name'] ?>
+                         </p>
+                     </li>
+                 <?php endforeach; ?>
+             </ul>
+         </section>
+     </main>
+     <?php require_once 'footer.php'; ?>
+ </body>
+
+ </html>
+
+ Pronto. Salve o arquivo.
+
+As variaveis php são:
+$listName - nome da lista atual
+$taskList - array contendo todas as tarefas da lista com nome em $listName.
+
+A pagina tem algumas imagens SVG que ocupam que faz a pagina parecer mais complicada, mais é muito simples, eu
+simplesmente copiei o conteudo do SVG ai e modifiquei os atributos width e height para controlar o tamanho da imagens,
+as imagens tem a funções de tornar os botões de excluir, ou marcar uma tarefa como concluida, mais apresentavel,  eu
+poderia tambem ter adicionado as classes btn btn-dark aos links para torna-los botões em vez de imagens dentro dos
+links, que funciona em <button>, <input> e <a>.
+
+Injetamos os conteudo do arquivos head.php, header.php, footer.php na pagina como antes.
+
+O elemento <form> tem o proposito de criar novas tarefas na lista atual em $listName, o formulario tem o atributo
+id="newTaskForm" que sera importante no futuro, o metodo usado é POST, a ação é submeter os dados a rota / com a
+variavel action igual process-new-task (processe nova tarefa) mais uma variavel com o nome da lista alvo.
+
+Dentro de <form> um <label> elemento pede para inserir uma tarefa, e um <input> elemento, caixa de texto
+para inserir o nome de uma tarefa. e um botão para enviar, submit, os dados. Todos na mesma linha por cause
+de 'row' a classe de antes.
+
+O fragmento de codigo a seguir tem a função de mostra uma mensagem de erro, se voçê forneçer um nome de
+tarefa invalido, ou se o nome da tarefa já existe. A classe CSS text-danger torna o texto vermelho para
+indicar o erro.
+
+ <?php if (isset($errors['taskName'])): ?>
+     <div class="row align-items-center">
+         <div class="col-3"></div>
+             <small class="text-danger col"><?= $errors['taskName'] ?></small>
+ </div>
+ <?php endif; ?>
+
+O elemento <ul> abaixo do <form> elemento exibe as tarefas já criadas alem de dois botões criados usando
+links para excluir uma tarefa e marcar uma tarefa como concluida. O loop foreach trata de repetir o padrão
+para cada tarefa na array $taskList tornando o processo muito fácil.
+
+O nome das tarefas são apresentados em <p> elemento como a seguir:
+
+<p class="col-10 m-0 <?= $task['done'] == '1' ? 'task-done' : '' ?>">
+        <?= $task['name'] ?>
+</p>
+
+Um hack é usado para inserir a classe, em head.php, se a tarefa estiver marcada como concluida.
+
+Isso conclui o codigo do app, a seguir testes com selenium. Voçê já pode ver o resultado se executar o comando a seguir no
+terminal, a partir da pasta raiz do projeto.Não esqueça que o servido MySQL deve estar executando no container.
+$ composer run dev
+
+Va para o browser no endereço localhost:8000 e sera apresentado um pagina para criar uma lista,
+no link Listas vai apareçer que não existem listas por que voçê não criou ainda.
+
+Para obter o codigo completo use o browser ou git como a baixo:
+Primeiro crie uma pasta em algum lugar e na linha de comando, na pasta on que salvar
+o codigo do repository e execute.
+
+$ sudo apt install git
+$ git clone https://github.com/marcelo-tech/ListasDeTarfeasComPHP.git
+$ cd ListasDeTarefasComPHP
+$ tree # para mostra o conteudo
+
+
+ --------------------- Testando o webapp com Selenium --------------------------
+Nota: Referências sobre pastas e comando executados na linha de comando serão com relação a pasta
+raiz do projeto, exatamente o mesmo diretorio de antes, por exemplo: app/controller, tests/Unit
+tests/Functional, app/repository, ...
+
+ 1. Criando a classe para obter os elementos da pagina list.php
+Crie o arquivo NewListPage.java na pasta tests/Functional/src/main/java/com/functional/todo
+com o conteudo como a seguir:
+
+// tests/Functional/src/main/java/com/functional/todo/NewListPage.java
+package com.functional.todo;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+/**
+ * POM page object model
+ **/
+public class NewListPage {
+    private final WebDriver driver;
+    private final By titleLocator = By.cssSelector("head > title");
+    private final By bootstrapCSSLocator = By.cssSelector("head > link:first-of-type");
+    private final By bootstrapJSLocator = By.cssSelector("head > script:first-of-type");
+    private final By headLocator = By.cssSelector("head:first-of-type");
+    private final By headerLocator = By.cssSelector("body > header:first-of-type");
+    private final By mainLocator = By.cssSelector("body > main:first-of-type");
+    private final By footerLocator = By.cssSelector("body > footer:last-of-type");
+
+    // form elements locator
+    private final By newListForm = By.cssSelector("#newListForm");
+    private final By listNameInput = By.cssSelector("#listName");
+    private final By submitButton = By.cssSelector("#submitButton");
+
+    public NewListPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    public WebElement getTitle() {
+        return driver.findElement(titleLocator);
+    }
+
+    public WebElement getBootstrapCSS() {
+        return driver.findElement(bootstrapCSSLocator);
+    }
+
+    public WebElement getBootstrapJS() {
+        return driver.findElement(bootstrapJSLocator);
+    }
+
+    public WebElement getHead() {
+        return driver.findElement(headLocator);
+    }
+
+    public WebElement getHeader() {
+        return driver.findElement(headerLocator);
+    }
+
+    public WebElement getMain() {
+        return driver.findElement(mainLocator);
+    }
+
+    public WebElement getFooter() {
+        return driver.findElement(footerLocator);
+    }
+
+    public WebElement getNewListForm() {
+        return driver.findElement(newListForm);
+    }
+
+    public WebElement getListNameInput() {
+        return driver.findElement(listNameInput);
+    }
+
+    public WebElement getSubmitButton() {
+        return driver.findElement(submitButton);
+    }
+
+    public void createList(String listName) {
+        var input = getListNameInput();
+        var btn = getSubmitButton();
+        input.sendKeys(listName);
+        btn.click();
+    }
+}
+
+Pronto. Salve.
+
+Vamos usar um padrão chamado POM que relaciona uma classe java para cada pagina e facilita
+busca de elementos na pagina. O que simplifica os testes.
+
+O proposito da classe é buscar na pagina em localhost:8000 os elementos <head>, <link>,  <header>,
+<main>, <footer>, <form>, <input> e <button>. Usando as variaveis headLocator, bootstrapCSSLocator,
+headerLocator, mainLocator, footerLocator, newListForm, listNameInput e finalmente submitButton.
+
+A conexão com o navegador ou browser, nesse caso firefox, é feita com a classe WebDriver da biblioteca
+selenium, por assim dizer. Mais sobre isso em breve.
+
+A classe By e usada para filtra os alvo na pagina. Por exemplo para filtrar todos os elementos <ul> na pagina
+use By.cssSelector("ul"), para filtrar um elemento qualquer com atributo id igual a 'elemento' use
+By.cssSelector("#elemento"), para filtra o ultimo filho do elemento <body>, <footer> nesse caso, use
+By.cssSelector("body > :last-child"), as possibilidades são muitas! Existem muitos outros metodos na
+classe By para esse propositos.
+
+A classe WebElement é usada para representa um elemento da pagina em codigo java. Por exemplo, suponha
+que voçê tenha uma pagina com o elemento <button id="enviar">Enviar</button> e deseja click-lo usando
+selenium, voçê pode fazer isso um objeto da classe WebElement.
+
+Exemplo:
+Digamos que voçê tem uma pagina como a seguir:
+<html><body>
+<button onclick="alert('hello')" id="button-id">Hello</button>
+</body></html>
+
+Que estiver sem servida no endereço localhost:8000, para clicar no botão com id="button-id"
+usando selenium e java voçê precisa do seguinte:
+
+// codigo java
+WebDriver driver = new FirefoxDriver();
+By locator = new By.cssSelector("#button-id");
+driver.get("localhost:8000");
+WebElement button = driver.findElement(locator);
+button.click(); // Clica no botão Hello e exibe a mensagem 'hello' no alert pop up.
+// fim do codigo java
+Isso funciona com qualquer site, não apenas localhost:8000, desde que o elemento exista na pagina!
+
+O proposito das variaveis são:
+headLocator - localiza o elemento <head> na pagina, se não estiver um erro ocorrera.
+
+bootstrapCSSLocator - localiza o elemento <link> dentro do elemento <head>, ele serve para saber se
+a pagina foi formada corretamente, porque montamos ele peça por peça. Em outras palavras ele serve
+para indicar que o <link> elemento que inclui bootstrap esta presente nessa pagina quando carregada
+no browser.
+
+headerLocator - localiza o elemento <header> na pagina carregada no browser, se não estiver o
+teste vai falhar.
+
+mainLocator - localiza o elemento <main> na pagina
+
+footerLocator - localiza o elemento <footer>
+
+newListForm - localiza o elemento <form> na pagina usando css selector como os outros mas
+usando o id do elemento. Esse elemento e usado para criar nomes de listas na pagina. Usando
+selenium vamos automatizar a criação de listas e determinar se a pagina estar funcionando
+como deveria.
+
+listNameInput - localiza o elemento <input> com id igual a 'listName' na pagina para poder
+inserir o nome da lista durante os testes.
+
+submitButton - localiza o botão para criar uma lista, ou seja depois de inserir o nome da
+lista na pagina usamos esse botão para enviar os dados para o servidor que por sua vez
+salva os dados no banco de dados.
+
+No construtor configuramos a variavel driver
+
+    public NewListPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+Aos metodos fazem um trabalho muito simples que é usar a função findElement() ou findElements()
+para achar o elemento na pagina atual e retorna o elemento, no case de findElement(), ou uma
+lista de elementos no case de findElements().
+
+Por exemplo getBootstrapCSS() retorna o elemento <link> depois de localiza-lo usando findElement(),
+então na classe onde os testes serão executados, testamos se uma referência ao arquivo bootstrap.min.css
+existe na pagina carregada no browser. getHead(), getHeader(), getMain(), ..., fazem uma tarefa similar.
+
+O metodo createList() automatiza a tarefa de criar uma lista, é uma função que auxilia os testes
+mas é importante testar a presença de cada elemento individualmente, porque se o teste falha com
+um especifico elemento é mais fácil de identificar o problema. O metodo obtem o elemento <input>
+para inserir o nome da lista, depois o botão submit em seguida usa o metodo sendKeys() para inserir
+texto no elemento <input>, caixa de texto, os dados é enviado quando btn.click() é executado. É
+exatamente como se voçê inserisse o texto e depois clicasse no botão "Criar", sem nenhuma distinção.
+A diferência é que selenium pode fazer isso muito mais rapido e lembrar de aplicar os testes de
+novo e de novo a medida que mais e mais codigo é criado.
+
+    public void createList(String listName) {
+        var input = getListNameInput();
+        var btn = getSubmitButton();
+        input.sendKeys(listName);
+        btn.click();
+    }
+
+
+
+ 2. Criando a classe NewListTest que usa a classe NewListPage
+ Usando como referência o diretorio do projeto original crie o arquivo NewListTest.java
+ na pasta testes/Functional/src/test/java/com/functional/todo com o conteudo a seguir:
+
+ // testes/Functional/src/test/java/com/functional/todo/NewListTest.java
+ package com.functional.todo;
+
+ import java.util.concurrent.TimeUnit;
+
+ import static org.junit.jupiter.api.Assertions.assertEquals;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
+ import static org.junit.jupiter.api.Assertions.assertFalse;
+
+ import org.junit.jupiter.api.*;
+
+ import static org.assertj.core.api.Assertions.assertThat;
+
+ import org.openqa.selenium.WebDriver;
+ import org.openqa.selenium.firefox.FirefoxDriver;
+
+ public class NewListTest {
+     private WebDriver driver;
+
+     private void pause(int secs) {
+         try {
+             TimeUnit.SECONDS.sleep(secs);
+         } catch (InterruptedException e) {
+         }
+     }
+
+     @BeforeEach
+     void setUp() {
+         final String url = "localhost:8000";
+         driver = new FirefoxDriver();
+         driver.get("localhost:8000/?action=test-cleanup-tables");
+         //pause(1);
+         driver.get(url);
+     }
+
+     @AfterEach
+     void tearDown() {
+         driver.quit();
+     }
+
+     @AfterAll
+     static  void tearDownClass() {
+         var driver = new FirefoxDriver();
+         driver.get("localhost:8000/?action=test-cleanup-tables");
+         driver.quit();
+     }
+
+     @Test
+     public void ShouldHaveBasicElementsWhenPageRequested() {
+         var listPage = new NewListPage(driver);
+         assertThat(listPage.getHead().isEnabled()).isTrue();
+         assertThat(listPage.getBootstrapCSS().getAttribute("href")).contains("/css/bootstrap.min.css");
+         assertThat(listPage.getHeader().isEnabled()).isTrue();
+         assertThat(listPage.getMain().isEnabled()).isTrue();
+         assertThat(listPage.getFooter().isEnabled()).isTrue();
+         assertThat(listPage.getTitle().isEnabled()).isTrue();
+         assertThat(driver.getPageSource()).containsIgnoringCase("<title>List</title>");
+     }
+
+     @Test
+     public void ShouldHaveFormToCreateNewListWhenPageRequested() {
+         var listPage = new NewListPage(driver);
+         assertThat(listPage.getNewListForm().isEnabled()).isTrue();
+         assertThat(listPage.getListNameInput().isEnabled()).isTrue();
+         assertThat(listPage.getSubmitButton().isEnabled()).isTrue();
+         var input = listPage.getListNameInput();
+         input.sendKeys("Lista de compras");
+         var submit = listPage.getSubmitButton();
+         submit.click();
+         assertThat(driver.getPageSource()).containsIgnoringCase("lista de compras");
+     }
+
+ }
+
+
+Pronto. Salve o arquivo.
+
+Essa classe é onde os testes da pagina com link 'Nova Lista' serão aplicados, NewListTest
+usa a classe NewListPage para obter os elementos para ela reduzindo o trabalho e permitindo
+a adição de novos testes sem saturar a classe.
+
+No topo da classe tempos a variavel driver que é responsavel por abrir o navegador,
+em nosso caso o firefox, e carregar a pagina nele, so depois disso é que podemos acessar
+os elementos da pagina. O metodo pause() é responsavel por incluir um pausa quando necessario,
+porque java codigo é executado depressa e quando uma pagina recarrega (refresh) temos que
+refazer o processo de obter os elementos novamente com NewListPage, se uma tentativa de
+obter um elemento é feita antes da pagina carregar selenium vai achar que os elementos
+não estão na pagina, quando na verdade a pagina ainda não carregou! Geralmente isso não
+é necessario.
+
+     private void pause(int secs) {
+         try {
+             TimeUnit.SECONDS.sleep(secs);
+         } catch (InterruptedException e) {
+         }
+     }
+
+@BeforeEach - (antes de cada) Java annotation (anotação) usado por JUnit5 (teste framework) para
+marcar metodos que executam tarefas de inicialização antes de cada teste ser executado. Nesse caso
+em particular o metodo setUp() inicializa a variavel driver antes de cada teste ser executado, ou seja
+uma instancia do browser firefox é criada e a pagina no endereço localhost:8000 e carregada para cada
+teste usando o metodo setUp()
+
+Note que setUp() antes faz uma requisição à URL "localhost:8000/?action=test-cleanup-tables" o
+faz com que os dados das tabela tasks e lists sejam excluidos, isso é essencial para impedir
+que dados antigos interfiram nos testes casando falha de testes de forma irregular.
+
+     @BeforeEach
+     void setUp() {
+         final String url = "localhost:8000";
+         driver = new FirefoxDriver();
+         driver.get("localhost:8000/?action=test-cleanup-tables");
+         //pause(1);
+         driver.get(url);
+     }
+
+@AfterEach - (depois de cada) Java annotation usada por JUnit5 para marcar metodos que executam tarefas de
+finalização depois de cada teste ser executado. Nesse caso em particular esse metodo fecha o browser firefox
+antes de um novo teste começar.
+
+     @AfterEach
+     void tearDown() {
+         driver.quit();
+     }
+
+@AfterAll - (depois de todos) Java annotation usada para marcar metodos que executam tarefas no
+final de todos os testes. Nesse case em particular o metodo com essa annotation, tearDownClass()
+limpa o banco de dados, usando variavel local. Tambem note que tearDownClass() é estatica. Isso
+porque uma nova instancia da classe NewListTest é criada para cada teste o que inviabiliza usar
+metodo não estatico para finalização final.
+
+     @AfterAll
+     static  void tearDownClass() {
+         var driver = new FirefoxDriver();
+         driver.get("localhost:8000/?action=test-cleanup-tables");
+         driver.quit();
+     }
+
+Agora os testes de fato:
+
+a) shouldHaveBasicElementsWhenPageRequested()
+@Test - java annotation que marca um metodo como sendo um teste.
+
+O metodo shouldHaveBasicElementsWhenPageRequested() traduz para a pagina deve conter os elementos
+basicos quando a pagina carregar do contrario o teste ira falhar. Usamos a classe NewListPage aqui
+para obter os elementos, como explicado antes.
+
+Na primeira chamada a assertThat() checamos se o elemento <head> estar presente com isEnabled()
+da classe WebElement isTrue() espera um valor verdadeiro, do contrario o teste atual vai falhar.
+Depois usamos assertThat() para checar se o atributo href do elemento <link> contem
+"/css/bootstrap.min.css", se não hover o teste falha e nada depois disso sera executado.
+Na terceira chamada a assertThat() checamos a presença do elemento <header> na pagina,
+primeiro com isEnabled() de WebElement que retorna true ou false, depois com isTrue() no
+objeto retornado por assertThat(), como antes se o resultado for false o teste vai falhar.
+Depois o elemento <footer> e o elemento <title>. A ultima chamada a assertThat() usa um metodo
+diferente para testar a pagina. Dessa vez usamos a variavel driver para obter todo o codigo
+HTML na forma de texto e em seguida usamos o metodo containsIgnoreCase() que checa a presença
+de um fragmento de texto dentro de uma string e tambem ignora maiuscula e minuscula. Nesse
+caso ele checa se o tituli da pagina esta no HTML.
+
+     @Test
+     public void ShouldHaveBasicElementsWhenPageRequested() {
+         var listPage = new NewListPage(driver);
+         assertThat(listPage.getHead().isEnabled()).isTrue();
+         assertThat(listPage.getBootstrapCSS().getAttribute("href")).contains("/css/bootstrap.min.css");
+         assertThat(listPage.getHeader().isEnabled()).isTrue();
+         assertThat(listPage.getMain().isEnabled()).isTrue();
+         assertThat(listPage.getFooter().isEnabled()).isTrue();
+         assertThat(listPage.getTitle().isEnabled()).isTrue();
+         assertThat(driver.getPageSource()).containsIgnoringCase("<title>List</title>");
+     }
+
+b) ShouldHaveFormToCreateNewListWhenPageRequested()
+O nome do metodo é significante para determinar a cause do erro, aqui se traduz o elemento <form>
+deve estar presente na pagina juntamente com <input> e <button> para o teste ser bem sucedido.
+Esse metodo vai criar um lista usando selenium e firefox para ver se o web app estar funcionando
+como deveria.
+
+Na primeira linha do copo do metodo, instanciamos um objeto da classe NewLisPage passando a
+variavel driver para que a classe possa encontrar os elementos <input> e <button> para que possamos
+inserir o nome da lista e depois clicar no elemento <button>. Depois checamos se o elemento <form>
+esta presente usando getNewListForm() e isEnabled(), assertThat() checa se o resultado é true do
+contrario, o teste falha bem ai. Depois checamos se os elementos <input> e <button> estão presentes
+na pagina, se não estiverem não faz sentido continuar, então o teste falhara.
+A parte interessante vem a seguir, onde salvamos o elemento <input> na variavel input e
+<button> em submit. Depois disso inserimos o nome da lista, "Lista de compras" nesse caso, em <input>
+usando sendKeys() então os dados são enviados usando o metodo click() do objeto submit. Depois de
+enviar os dados para o servidor uma nova pagina vai carrega e depois que isso aconteçe é que o
+teste na ultima linha é executado, ou seja usamos driver para obter o codigo a nova pagina, em seguida
+checamos se o nome da lista esta presente usando containsIgnoreCase(). Note que a variavel driver e
+atualizada automaticamente e isso é o que queremos, a pagina atual esta em tasks.php. Tambem poderiamos
+checar a presença da lista no sistema fazendo uma chamada explicita ao metodo get() na variavel driver
+como por exemplo: driver.get("localhost:8000/?action=lists") e então achar o nome da lista na pagina
+usando getPageSource() de driver.
+
+     @Test
+     public void ShouldHaveFormToCreateNewListWhenPageRequested() {
+         var listPage = new NewListPage(driver);
+         assertThat(listPage.getNewListForm().isEnabled()).isTrue();
+         assertThat(listPage.getListNameInput().isEnabled()).isTrue();
+         assertThat(listPage.getSubmitButton().isEnabled()).isTrue();
+         var input = listPage.getListNameInput();
+         input.sendKeys("Lista de compras");
+         var submit = listPage.getSubmitButton();
+         submit.click();
+         assertThat(driver.getPageSource()).containsIgnoringCase("lista de compras");
+     }
+
+Como os testes são independêntes já podemos executar-lo, para isso não esqueça que o container
+com mysql deve esta online e o servidor deve estar executando (composer run dev).
+Atenção: Voçê deve fechar os browser que estivem aberto antes de executar os testes ou isso
+pode interferir nos testes.
+
+Para executar os testes, a partir da raiz do projeto, execute o seguinte:
+$ composer run functional-test # executa testes usando junit e selenium
+
+ 3. Criando a classe TasksPage para testar a pagina de criar tarefas.
+ Adicione o conteudo a seguir no arquivo TasksPage.java na pasta
+ testes/Functional/src/main/java/com/functional/todo/TasksPage.java
+
+ // testes/Functional/src/main/java/com/functional/todo/TasksPage.java
+ package com.functional.todo;
+
+ import org.openqa.selenium.By;
+ import org.openqa.selenium.WebDriver;
+ import org.openqa.selenium.WebElement;
+
+ import java.util.List;
+
+ public class TasksPage {
+     private final WebDriver driver;
+     // new tasks form
+     private final By newTaskForm = By.cssSelector("#newTaskForm");
+     private final By taskNameInput = By.name("taskName");
+     private final By submitButton = By.cssSelector("#submitButton");
+
+     // tasks list
+     private final By tasksList = By.cssSelector("#tasksList");
+     private final By tasksLink = By.cssSelector("#tasksList > li a[href]:first-child");
+     private final By markTasksAsDoneLink = By.cssSelector("#tasksList > li a[href]:nth-of-type(2)");
+     private final By tasksParagraph = By.cssSelector("#tasksList > li > p:first-of-type");
+
+     public TasksPage(WebDriver driver) {
+         this.driver = driver;
+     }
+
+     public WebElement getNewTasksForm() {
+         return driver.findElement(newTaskForm);
+     }
+
+     public WebElement getTaskNameInput() {
+         return driver.findElement(taskNameInput);
+     }
+
+     public WebElement getSubmitButton() {
+         return driver.findElement(submitButton);
+     }
+
+     public WebElement getTasksList() {
+         return driver.findElement(tasksList);
+     }
+
+     public List<WebElement> getTasksLinks() {
+         return driver.findElements(tasksLink);
+     }
+
+     public WebElement getRemoveTasksButton(int index) {
+         return driver.findElements(tasksLink).get(index);
+     }
+
+     public WebElement getMarkTasksAsDoneButton(int index) {
+         return driver.findElements(markTasksAsDoneLink).get(index);
+     }
+
+     public WebElement getTasksParagraph(int index) {
+         return driver.findElements(tasksParagraph).get(index);
+     }
+
+     public void createTask(String taskName) {
+         var input = getTaskNameInput();
+         var btn = getSubmitButton();
+         input.sendKeys(taskName);
+         btn.click();
+     }
+ }
+
+
+Pronto. pode salvar o arquivo.
+
+A classe TasksPage é similar a NewListPage de muitas formas e serve a proposito
+similar tambem. Ela serve para obter, de forma limpa, os elementos da pagina de
+criação de tarefas, precisamente <input>, <button>, <ul>, <a> e <p>.
+
+As variaveis da classe tem o seguintes significados:
+taskNameInput - caixa de texto, <input>, para criar uma tarefa.
+submitButton - Botão submit para enviar a solicitação de criar a terefa.
+tasksList - contem todas as tarefas, os dados de todas as tarefas na verdade.
+tasksLink - contem o primeiro link de cada <li> da lista de tarefas,e ele é
+usado para contar o numero de tarefas na pagina.
+markTasksAsDoneLink - Butão para marcar um tarefa como concluida.
+tasksParagraph - <p> elemento contendo o nome ou texto da tarefa. serve para
+checar se o nome da tarefa apareçe como foi criado.
+
+Os metodos são getters e setters basicamente, e o construtor configura a variavel
+driver.
+
+
+ 4. Criando a classe TasksTest para testar a pagina em tasks.php
+ Adicione o conteudo a seguir no arquivo TasksTest.java na pasta
+ testes/Functional/src/test/java/com/functional/todo/TasksTest.java
+
+//  testes/Functional/src/test/java/com/functional/todo/TasksTest.java
+package com.functional.todo;
+
+import org.junit.jupiter.api.*;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+import java.util.concurrent.TimeUnit;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+
+public class TasksTest {
+    private WebDriver driver;
+    private NewListPage listPage;
+
+    private void pause(int secs) {
+        try {
+            TimeUnit.SECONDS.sleep(secs);
+        } catch (InterruptedException e) {
+        }
+    }
+
+    @BeforeEach
+    void setUp() {
+        final String url = "localhost:8000";
+        driver = new FirefoxDriver();
+        driver.get("localhost:8000/?action=test-cleanup-tables");
+        //pause(1);
+        driver.get(url);
+        listPage = new NewListPage(driver);
+    }
+
+    @AfterEach
+    void tearDown() {
+        driver.quit();
+    }
+
+    @AfterAll
+    static void tearDownClass() {
+        var driver = new FirefoxDriver();
+        driver.get("localhost:8000/?action=test-cleanup-tables");
+        driver.quit();
+    }
+
+    @DisplayName("Deve redirecionar para pagina tasks Quando criar lista com sucesso.")
+    @Test
+    public void shouldRedirectToTasksWhenSubmitSuccessfullyOnListPage() {
+        var listPage = new NewListPage(driver);
+        var input = listPage.getListNameInput();
+        var submitListNameButton = listPage.getSubmitButton();
+        input.sendKeys("Lista de compras");
+        submitListNameButton.click();
+        assertThat(driver.getPageSource()).containsIgnoringCase("Lista de compras");
+        driver.quit();
+    }
+
+    @Test
+    void shouldExistCreateTaskFormWhenPageTodoOpen() {
+        var listPage = new NewListPage(driver);
+        var input = listPage.getListNameInput();
+        var btn = listPage.getSubmitButton();
+        input.sendKeys("Lista de tarefas do dia");
+        btn.click();
+
+        var tasksPage = new TasksPage(driver);
+        assertThat(tasksPage.getNewTasksForm().isEnabled()).isTrue();
+    }
+
+    @Test
+    void shouldExistTaskListWhenPageTodoOpen() {
+        var listPage = new NewListPage(driver);
+        var input = listPage.getListNameInput();
+        var btn = listPage.getSubmitButton();
+        input.sendKeys("Partes que precisão de concerto no carro");
+        btn.click();
+
+        var tasksPage = new TasksPage(driver);
+        assertThat(tasksPage.getTasksList().isEnabled()).isTrue();
+    }
+
+    @Test
+    public void shouldBePossibleToInsertTasksWhenOnTasksPage() {
+        var listPage = new NewListPage(driver);
+        var listInput = listPage.getListNameInput();
+        var listSubmitButton = listPage.getSubmitButton();
+        listInput.sendKeys("Lista de compras");
+        listSubmitButton.click();
+
+        assertThat(driver.getCurrentUrl()).containsIgnoringCase("todo");
+        var tasksPage = new TasksPage(driver);
+        var taskInput = tasksPage.getTaskNameInput();
+        var taskSubmitButton = tasksPage.getSubmitButton();
+        taskInput.sendKeys("Comprar leite");
+        taskSubmitButton.click();
+        assertThat(driver.getPageSource()).containsIgnoringCase("Comprar leite");
+        driver.quit();
+    }
+
+    @Test
+    void shouldIdAttributeBePresentOnEachTaskWhenCreated() {
+        var listPage = new NewListPage(driver);
+        var listInput = listPage.getListNameInput();
+        var listSubmitButton = listPage.getSubmitButton();
+        listInput.sendKeys("Lista de compras");
+        listSubmitButton.click();
+
+        var tasksPage = new TasksPage(driver);
+        var tasksInput = tasksPage.getTaskNameInput();
+        var taskSubmitButton = tasksPage.getSubmitButton();
+        tasksInput.sendKeys("Comprar leite");
+        taskSubmitButton.click();
+        var tasksLink = tasksPage.getTasksLinks();
+        assertThat(tasksLink.getFirst().getAttribute("href")).containsIgnoringCase("id=1");
+
+    }
+
+    @Test
+    void shouldBePossibleToInsertMoreThanOneTaskWhenCreatingTasks() {
+        var listPage = new NewListPage(driver);
+        listPage.createList("Lista de compras");
+        var tasks = new TasksPage(driver);
+
+        tasks.createTask("Comprar leite");
+        tasks = new TasksPage(driver);
+        tasks.createTask("Comprar ovos");
+
+        assertThat(driver.getPageSource()).containsIgnoringCase("Comprar ovos");
+        assertThat(driver.getPageSource()).containsIgnoringCase("Comprar leite");
+    }
+
+    @Test
+    void shouldFindTasksIdSequenceWhenCreatingMultipleTasks() {
+        var listPage = new NewListPage(driver);
+        listPage.createList("Lista de compras");
+        TasksPage tasksPage = new TasksPage(driver);
+        tasksPage.createTask("Comprar leite");
+
+        tasksPage = new TasksPage(driver);
+        tasksPage.createTask("Comprar ovos");
+
+        tasksPage = new TasksPage(driver);
+        tasksPage.createTask("Comprar açucar");
+
+        tasksPage = new TasksPage(driver);
+        var tasksLinks = tasksPage.getTasksLinks();
+
+        assertThat(tasksLinks.size()).isEqualTo(3);
+        for(int i = 1; i < 4; i++) {
+            assertThat(tasksLinks.get(i - 1).getAttribute("href")).containsIgnoringCase("action=remove-task&id=" + i);
+        }
+    }
+
+    @Test
+    void shouldBePossibleToRemoveTasksWhenClickOnRemoveButton() {
+        listPage.createList("Lista de compras de eletrónicos");
+        new TasksPage(driver).createTask("Comprar mouse");
+        new TasksPage(driver).createTask("Comprar HD");
+        new TasksPage(driver).createTask("Comprar monitor");
+
+        var btn = new TasksPage(driver).getRemoveTasksButton(0);
+        btn.click();
+
+        new TasksPage(driver).getRemoveTasksButton(0).click();
+        new TasksPage(driver).getRemoveTasksButton(0).click();
+
+        assertThat(new TasksPage(driver).getTasksLinks().size()).isEqualTo(0);
+    }
+
+    @Test
+    void shouldBePossibleToMarkTasksAsDoneWhenClickOnMarkTaskAsDone() {
+        listPage.createList("Lista de compras");
+        new TasksPage(driver).createTask("Comprar leite");
+        new TasksPage(driver).createTask("Comprar ovos");
+        new TasksPage(driver).createTask("Comprar açúcar");
+        var btn = new TasksPage(driver).getMarkTasksAsDoneButton(1);
+        btn.click();
+
+        var p = new TasksPage(driver).getTasksParagraph(1);
+        assertThat(p.getText()).containsIgnoringCase("comprar ovos");
+        assertThat(p.getAttribute("class")).containsIgnoringCase("task-done");
+    }
+}
+
+Pronto. Salve o arquivo.
+
+A classe tem duas variaveis uma para o controlador do browser, driver,
+e outra para da suporte de inicialização antes dos testes ou seja antes de poder
+criar uma tarefa, precisamos de uma lista e como um teste deve ser independente do
+outro, precisamos criar uma lista para cada teste. Isso é alcançado com a ajuda da classe
+NewListPage de antes que possui um metodo criado para isso, createList().
+
+a) setUp()
+O metodo setUp() anotado com @BeforeEach e responsavel por inicializar a variavel
+driver e limpar possiveis dados antigos no banco de dados. Depois disso setUp()
+carrega a pagina em localhost:8000, para criar listas em list.php, usando get().
+Tambem uma instancia da classe NewListPage é criada usando a variavel driver.
+Como essa função é anotada com @BeforeEach as variaveis driver, listPage serão
+criadas, nova em folha, para cada metodo anotado com @Test.
+
+    @BeforeEach
+    void setUp() {
+        final String url = "localhost:8000";
+        driver = new FirefoxDriver();
+        driver.get("localhost:8000/?action=test-cleanup-tables");
+        //pause(1);
+        driver.get(url);
+        listPage = new NewListPage(driver);
+    }
+
+
+b) tearDown()
+tearDown() fecha o browser, impedindo que continue aberto depois do teste terminar
+com sucesso ou não.
+
+    @AfterEach
+    void tearDown() {
+        driver.quit();
+    }
+
+c) tearDownClass()
+tearDownClass() limpa o banco de dados depois de todos os testes.
+
+    @AfterAll
+    static void tearDownClass() {
+        var driver = new FirefoxDriver();
+        driver.get("localhost:8000/?action=test-cleanup-tables");
+        driver.quit();
+    }
+
+
+d) shouldRedirectToTasksWhenSubmitSuccessfullyOnListPage()
+Esse metodo, anotado com @Test para indicar que é um teste, criar uma lista na pagina
+gerada por list.php e depois espera que sejamos redirecionados para a pagina criar tarefas
+que é o foco de testes dessa classe. A razão de criar uma lista primeiro foi descrita antes.
+Mas o foco da classe TasksTest é testar a pagina gerada por tasks.php.
+O metodo é tambem anotado com @DisplayName("alguma-mensagem"), ele é mais util quando
+executando testes em um IDE como Intellij Idea, o que faz a mensagem ser exibida quando
+o teste para, verde, ou falha, vermelho. Mas não faço uso nesse tutorial. Foi colocado
+aqui apenas para exemplificar.
+
+Depois de criar a lista usando os elementos da classe NewListPage, selenium espera tipo uns
+meio segundo, 0.5s, então usamos driver.getPageSource() para obter o codigo da pagina, e em seguida,
+testamos se o nome da lista que criamos esta presente na pagina usando containsIgnoreCase().
+
+    @DisplayName("Deve redirecionar para pagina tasks Quando criar lista com sucesso.")
+    @Test
+    public void shouldRedirectToTasksWhenSubmitSuccessfullyOnListPage() {
+        var listPage = new NewListPage(driver);
+        var input = listPage.getListNameInput();
+        var submitListNameButton = listPage.getSubmitButton();
+        input.sendKeys("Lista de compras");
+        submitListNameButton.click();
+        assertThat(driver.getPageSource()).containsIgnoringCase("Lista de compras");
+    }
+
+e) shouldExistCreateTaskFormWhenPageTodoOpen()
+Esse metodo checa se os elementos necessarios para criar tarefas apareçem na pagina
+gerada por tasks.php. Primeiro criando uma lista com a ajuda da classe NewListPage
+depois checando se o elemento <form> esta presente com isEnabled() assertThat() e isTrue()
+fazem o resto. Se o teste falha é porque a pagina esta mal formada e precisamos fazer alguns
+concerto.
+
+É importante afirmar que esse testes foram criados durante o desenvolvimento do app não depois
+como pareçe, os testes são mais uteis se derem suporte ao desenvolvimento do aplicativo.
+
+Como antes criamos uma lista primeiro com nome "Lista de tarefas do dia", depois de clicar em
+submit, a pagina recarrega e checamos se <form> esta presente.
+
+    @Test
+    void shouldExistCreateTaskFormWhenPageTodoOpen() {
+        var listPage = new NewListPage(driver);
+        var input = listPage.getListNameInput();
+        var btn = listPage.getSubmitButton();
+        input.sendKeys("Lista de tarefas do dia");
+        btn.click();
+
+        var tasksPage = new TasksPage(driver);
+        assertThat(tasksPage.getNewTasksForm().isEnabled()).isTrue();
+    }
+
+f) shouldExistTaskListWhenPageTodoOpen()
+O metodo shouldExistTaskListWhenPageTodoOpen()  checa se o elemento <ul> existe na pagina
+gerada por tasks.php o que indica que as tarefas cridas serão exibidas prontamente.
+Depois de criar a lista "Partes que precisão de concerto no carro", a pagina gerada por tasks.php
+é carregada no browser e então podemos checar o elemento <ul> usando isEnabled() da classe
+WebElement e assertThat().
+
+    @Test
+    void shouldExistTaskListWhenPageTodoOpen() {
+        var listPage = new NewListPage(driver);
+        var input = listPage.getListNameInput();
+        var btn = listPage.getSubmitButton();
+        input.sendKeys("Partes que precisão de concerto no carro");
+        btn.click();
+
+        var tasksPage = new TasksPage(driver);
+        assertThat(tasksPage.getTasksList().isEnabled()).isTrue();
+    }
+
+g) shouldBePossibleToInsertTasksWhenOnTasksPage()
+O metodo shouldBePossibleToInsertTasksWhenOnTasksPage() testa se é possivel criar tarefas
+quando a pagina gerada por tasks.php carrega. Para isso primeiro uma lista é criada com
+titulo "Lista de compras" depois driver.getCurrentUrl() para obter a URL da pagina e checar
+se o texto "todo" esta presente, o que indicaria que estamos no lugar certo. containsIgnoreCase()
+é chamado para o trabalho. A seguir criamos um objeto da classe TasksPage que localiza elementos
+na pagina gerada por tasks.php.
+
+A variavel taskInput contem o elemento <input> para inserir a tarefa, se o elemento não for encontrado
+o teste falhara antes mesmo de usarmos assertThat() com uma mensagem com "No such element...", isso
+vem de selenium e significar problem ao carrega a pagina certa, na maioria das vezes.
+
+Inserimos a o nome da tarefa em <input> usando driver.sendKeys() e a tarefa e realmente criada quando
+clicamos no botão com tasksSubmitButton.click().
+
+Na linha final em assertThat(), obtemos o codigo da pagina com getPageSource() e containsIgnoreCase()
+checa se o texto "Comprar leite", que inserimos antes, esta presente na pagina, ou seja na lista de tarefas
+abaixo do elemento <form>.
+
+    @Test
+    public void shouldBePossibleToInsertTasksWhenOnTasksPage() {
+        var listPage = new NewListPage(driver);
+        var listInput = listPage.getListNameInput();
+        var listSubmitButton = listPage.getSubmitButton();
+        listInput.sendKeys("Lista de compras");
+        listSubmitButton.click();
+
+        assertThat(driver.getCurrentUrl()).containsIgnoringCase("todo");
+        var tasksPage = new TasksPage(driver);
+        var taskInput = tasksPage.getTaskNameInput();
+        var taskSubmitButton = tasksPage.getSubmitButton();
+        taskInput.sendKeys("Comprar leite");
+        taskSubmitButton.click();
+        assertThat(driver.getPageSource()).containsIgnoringCase("Comprar leite");
+    }
+
+h) shouldIdAttributeBePresentOnEachTaskWhenCreated()
+O metodo shouldIdAttributeBePresentOnEachTaskWhenCreated() checa a presença de atributo id
+na ordem correta em cada tarefa, essa verificação tem o proposito garantir que as informações
+de cada tarefa sejam configurada do jeito certo, do contrario quando tentarmos usa-las em
+ListController classe para interpretar a informação erros estranho podem ocorre.
+O metodo começa instanciando um objeto da classe NewListPage para subsequentemente criar
+uma lista chamada "Lista de compras" o que nos redireciona automaticamente para a pagina
+gerada por tasks.php onde vamos criar um tarefa com nome "Comprar leite" e subsequentemente
+testar se o id da tarefa é igual a 1. Isso ocorre porque todos os dados da tabela tasks
+são apagados e o id reiniciado para 1 usando comando SQL ALTER em ListRepository.
+O teste é feito obtendo o primeiro elemento <a> dentro do <li> que contem informações
+da tarefa, tambem poderiamos usar o segundo e o resultado seria o mesmo.
+Lembrando que o primeiro elemento <a> dentro do <li> presenta o botão de excluir uma
+tarefa e portando, o id da tarefa é necessario.
+Na ultima linha usamos o metodo getFirst() da class List de java api para obter o primeiro
+item da lista e getAttribute() de WebElement para obter o valor do atributo href do elemento
+<a> e checar se a string id=1 esta presente no valor do href.
+
+    @Test
+    void shouldIdAttributeBePresentOnEachTaskWhenCreated() {
+        var listPage = new NewListPage(driver);
+        var listInput = listPage.getListNameInput();
+        var listSubmitButton = listPage.getSubmitButton();
+        listInput.sendKeys("Lista de compras");
+        listSubmitButton.click();
+
+        var tasksPage = new TasksPage(driver);
+        var tasksInput = tasksPage.getTaskNameInput();
+        var taskSubmitButton = tasksPage.getSubmitButton();
+        tasksInput.sendKeys("Comprar leite");
+        taskSubmitButton.click();
+        var tasksLink = tasksPage.getTasksLinks();
+        assertThat(tasksLink.getFirst().getAttribute("href")).containsIgnoringCase("id=1");
+
+    }
+
+
+i) shouldBePossibleToInsertMoreThanOneTaskWhenCreatingTasks()
+o metodo checa se é possivel inserir mais que uma tarefa no banco de dados, uma garantia
+de que os sistema é estavel apenas. O codigo é similar a verificação que é possivel inserir uma
+tarefa.
+
+
+    @Test
+    void shouldBePossibleToInsertMoreThanOneTaskWhenCreatingTasks() {
+        var listPage = new NewListPage(driver);
+        listPage.createList("Lista de compras");
+        var tasks = new TasksPage(driver);
+
+        tasks.createTask("Comprar leite");
+        tasks = new TasksPage(driver);
+        tasks.createTask("Comprar ovos");
+
+        assertThat(driver.getPageSource()).containsIgnoringCase("Comprar ovos");
+        assertThat(driver.getPageSource()).containsIgnoringCase("Comprar leite");
+    }
+
+j) shouldFindTasksIdSequenceWhenCreatingMultipleTasks()
+Esse metodo é identico com shouldIdAttributeBePresentOnEachTaskWhenCreated() a
+diferência é que ele checar a presença do id para multiplas tarefas usando um loop
+depois de ter inserido multiplas tarefas, "Comprar leite", "Comprar ovos" e
+"Comprar açúcar" mais precisamente.
+Para executar os testes atravessamos o loop de 1 para 3, três tarefas, e usamos o
+metodo get() da classe List de java e em sequência getAttribute() para obter o valor do
+atributo href do link que funciona como botão excluir, finalmente com  o metodo
+containsIgnoreCase() checamos o valor do atributo href contra "action=remove-task&id={1,2,3}"
+se os ids estiverem em order o teste passa. Alem disso note a variavel action sendo configurada
+para 'remove-task' o que é envida da pagina para o servidor quando o botão excluir tarefa é
+clicado.
+
+    @Test
+    void shouldFindTasksIdSequenceWhenCreatingMultipleTasks() {
+        var listPage = new NewListPage(driver);
+        listPage.createList("Lista de compras");
+        TasksPage tasksPage = new TasksPage(driver);
+        tasksPage.createTask("Comprar leite");
+
+        tasksPage = new TasksPage(driver);
+        tasksPage.createTask("Comprar ovos");
+
+        tasksPage = new TasksPage(driver);
+        tasksPage.createTask("Comprar açúcar");
+
+        tasksPage = new TasksPage(driver);
+        var tasksLinks = tasksPage.getTasksLinks();
+
+        assertThat(tasksLinks.size()).isEqualTo(3);
+        for(int i = 1; i < 4; i++) {
+            assertThat(tasksLinks.get(i - 1).getAttribute("href")).containsIgnoringCase("action=remove-task&id=" + i);
+        }
+    }
+
+k) shouldBePossibleToRemoveTasksWhenClickOnRemoveButton()
+Esse metodo é usado para testar se é possivel excluir um tarefa, para isso primeiro inserimos
+3 tarefas usando a classe TasksPage e o metodo createTask() para simplificar o processo.
+Note que para cada tarefa criada a pagina recarrega e portanto precisamos instanciar novamente
+a classe TasksPage passando como argumento a variavel driver.
+O metodo getRemoveButton() da classe TasksPage é usado para obter o botão para excluir uma tarefa,
+um link nesse caso, o argumento 0 de getRemoveTasksButton() é um indice que representa o elemento
+mais no topo da pagina. Depois de obtermos uma referencia para o elemento na pagina, clicamos no
+elemento com o metodo click(), isso faz com que a tarefa seja excluida do banco de dados e a pagina
+recarrega, portanto precisamos refazer o processo com a classe TasksPage novamente para obter o
+botão excluir.
+Finalmente na ultima linha usamos o metodo getTasksLinks() para checar se o numero de tarefas
+é de fato zero. Se todas as tarefas forem realmente excluidas o teste passara.
+
+    @Test
+    void shouldBePossibleToRemoveTasksWhenClickOnRemoveButton() {
+        listPage.createList("Lista de compras de eletrónicos");
+        new TasksPage(driver).createTask("Comprar mouse");
+        new TasksPage(driver).createTask("Comprar HD");
+        new TasksPage(driver).createTask("Comprar monitor");
+
+        var btn = new TasksPage(driver).getRemoveTasksButton(0);
+        btn.click();
+
+        new TasksPage(driver).getRemoveTasksButton(0).click();
+        new TasksPage(driver).getRemoveTasksButton(0).click();
+
+        assertThat(new TasksPage(driver).getTasksLinks().size()).isEqualTo(0);
+    }
+
+l) shouldBePossibleToMarkTasksAsDoneWhenClickOnMarkTaskAsDone()
+O metodo checa se realmente é possivel marcar uma tarefa como concluida. O teste
+basicamente encontra o botão para marcar uma tarefa como concluida, o segundo link em cada <li>
+na pagina gerada por tasks.php, e clica nesse link ou botão.
+O metodo primeiro cria uma lista, "Lista de compras", depois três tarefas usando a função auxiliar
+createTask().
+Usamos getMarkTasksAsDoneButton() com o indice 1 como argumento, o botão para marcar uma tarefa como
+concluida é salvo em btn e depois o metodo click() é usado para executar a operação.
+Para checar o resultado, quando a pagina recarrega, usamos getTasksParagraph() com indice 1
+para filtra apenas um tarefa, "comprar ovos" nesse caso.
+Usamos o metodo getText() do elemento <p> para obter o texto do elemento e compara com
+"comprar ovos". Na ultima linha usamos o metodo getAttribute(), do paragrafo (<p>), para
+obter o valor do atributo class, então comparamos com o valor "task-done" de head.php.
+
+    @Test
+    void shouldBePossibleToMarkTasksAsDoneWhenClickOnMarkTaskAsDone() {
+        listPage.createList("Lista de compras");
+        new TasksPage(driver).createTask("Comprar leite");
+        new TasksPage(driver).createTask("Comprar ovos");
+        new TasksPage(driver).createTask("Comprar açúcar");
+        var btn = new TasksPage(driver).getMarkTasksAsDoneButton(1);
+        btn.click();
+
+        var p = new TasksPage(driver).getTasksParagraph(1);
+        assertThat(p.getText()).containsIgnoringCase("comprar ovos");
+        assertThat(p.getAttribute("class")).containsIgnoringCase("task-done");
+    }
+
+
+
+
+5. Criando a classe ListsPage para obter os elementos da pagina gerada por lists.php
+Crie o arquivo ListsPage.java na pasta testes/Functional/src/main/java/com/functional/todo
+
+// ListsPage.java
+package com.functional.todo;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import java.util.List;
+
+public class ListsPage {
+    private WebDriver driver;
+    private final By navLinks = By.cssSelector("header > nav a[href]");
+    private final By lists = By.cssSelector("#lists");
+    private final By listNames = By.cssSelector("#lists > li a[href]:first-of-type > span");
+    private final By numberOfTasksPerList = By.cssSelector("#lists > li > small:first-of-type");
+
+    public ListsPage(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    public List<WebElement> getNavLinks() {
+        return driver.findElements(navLinks);
+    }
+
+    public WebElement getListsContainer() {
+        return driver.findElement(lists);
+    }
+
+    public List<WebElement> getListNames() {
+        return driver.findElements(listNames);
+    }
+
+    public List<WebElement> getNumberOfTasksPerList() {
+        return driver.findElements(numberOfTasksPerList);
+    }
+}
+
+Pronto. salve o arquivo.
+A classe ListsPage tem a responsabilidade de achar elementos na pagina gerada por lists.php
+que contem todas as lista já criadas. Essa pagina é muito importante para o app porque
+quando sairmos do app, podemos voltar e retomar o trabalho, de criar e editar tarefas, de
+onde paramos.
+
+A classe é curta mais voçê pode incluir mais funcionalidades depois. As variaveis da classe
+tem o seguintes significados:
+
+navLinks - obtem os links de navegação do topo da pagina em <header> usando css seletor
+"header > nav a[href]" o que traduz 'selecione os <a> elementos descentes de <nav> que por
+sua vez são filhos de <header>', isso é um poderoso recurso de css que tem pode ser usados
+de diversas formas, para me é o melhor jeito se selecionar elemento, tanto para aplica
+estilos, como para achar elementos usando selenium, porque torna fácil atingir qualquer alvo
+na pagina de forma objetivo. Um capitulo so sobre isso pode ser lido em CSS The definitive
+Guide de Eric Meyer.
+
+lists - obtem o elemento <ul> on as listas são mostradas.
+
+listNames - obtem os elementos que contem os nomes das listas, texto, nesse caso o
+elemento <span>.
+
+numberOfTasksPerList - obtem a quantidade de tarefas em cada lista o que esta no elemento
+<small>, a pseudo classe :first-of-type garante que se colocarmos mais <small> elementos
+depois o testes não serão comprometidos.
+
+O construtor configura a variavel driver que é necessaria para obter os elementos na pagina,
+e getNavsLinks() retorna uma lista to todos os links de navegação. getListsContainer() retorna
+o elemento <ul> da pagina que contem os nomes das listas, getListsNames() retorna os nomes, ou
+os elementos que contem os nomes, das listas. O metodo getNumberOfTasksPerList() é usado para
+obter o numero de tarefa por lista, ou o elemento que contem a informação.
+
+
+
+
+6. Criando a classe ListsTest para testar a pagina gerada por lists.php
+Crie o arquivo ListsTest.java na pasta testes/Functional/src/test/java/com/functional/todo
+com o conteudo a seguir.
+
+// ListsTest.java
+package com.functional.todo;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+import java.util.concurrent.TimeUnit;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class ListsTest {
+    private WebDriver driver;
+
+    private void pause(int secs) {
+        try {
+            TimeUnit.SECONDS.sleep(secs);
+        } catch (InterruptedException e) {
+        }
+    }
+
+    @BeforeEach
+    void setUp() {
+        driver = new FirefoxDriver();
+        driver.get("localhost:8000/?action=test-cleanup-tables");
+        driver.get("localhost:8000");
+    }
+
+    @AfterEach
+    void tearDown() {
+        driver.quit();
+    }
+
+    @Test
+    void shouldExistNavLinkForListsWhenListsPageLoad() {
+        new NewListPage(driver).createList("Lista de ferramentas");
+        var listsPage = new ListsPage(driver);
+        var navLinks = listsPage.getNavLinks();
+        var newListLink = navLinks.get(0);
+        var tasksLink = navLinks.get(1);
+        var listsLink = navLinks.get(2);
+
+        assertThat(newListLink.getText()).containsIgnoringCase("Nova Lista");
+        assertThat(listsLink.getText()).containsIgnoringCase("Listas");
+        assertThat(tasksLink.getText()).containsIgnoringCase("Tarefas");
+    }
+
+    @Test
+    void shouldHaveListContainerWhenListsPageLoad() {
+        driver.get("localhost:8000/?action=lists");
+        var listsPage = new ListsPage(driver);
+        assertThat(listsPage.getListsContainer().isEnabled()).isTrue();
+    }
+
+    @Test
+    void shouldHaveTheNamesOfTheListsCreatedWhenListsPageLoad() {
+        String  url = "localhost:8000";
+        new NewListPage(driver).createList("Lista de compras");
+
+        driver.get(url);
+        new NewListPage(driver).createList("Ingredientes da receita de bolo");
+
+        driver.get(url);
+        new NewListPage(driver).createList("Peças para concertar no carro");
+
+        driver.get(url + "/?action=lists");
+        var listsPage = new ListsPage(driver);
+        var listNames = listsPage.getListNames();
+
+        assertThat(listNames.get(0).getText()).containsIgnoringCase("lista de compras");
+        assertThat(listNames.get(1).getText()).containsIgnoringCase("Ingredientes da receita de bolo");
+        assertThat(listNames.get(2).getText()).containsIgnoringCase("peças para concertar no carro");
+    }
+
+    @Test
+    void shouldHaveTheNumberOfTasksOnEachListWhenListsExistsOnPage() {
+        new NewListPage(driver).createList("Lista de compras");
+        new TasksPage(driver).createTask("Comprar leite");
+        new TasksPage(driver).createTask("Comprar açúcar");
+        new TasksPage(driver).createTask("Comprar ovos");
+
+        driver.get("localhost:8000/?action=lists");
+        var listsPage = new ListsPage(driver);
+        var numberOfTasksPerListParagraphs = listsPage.getNumberOfTasksPerList();
+        assertThat(numberOfTasksPerListParagraphs.get(0).getText()).containsIgnoringCase("3");
+    }
+}
+
+Pronto. Salve o arquivo.
+
+Essa classe implementa os testes para a pagina gerada por lists.php e são executados
+sequêncialmente por junit e maven usando selenium api.
+
+- setUp() anotado com @BeforeEach executa antes de cada metodo e inicia uma nova instancia
+da classe FirefoxDriver() e salva em driver, então usa o metodo get() para limpar dados
+antigos do banco de dados, depois carrega a pagina em localhost:8000 servida por PHP.
+
+- tearDown() fecha o browser depois de cada testes para que ele não aberto se um teste
+falhe (hang).
+
+a) O metodo shouldExistNavLinkForListsWhenListsPageLoad() testa a presença do
+texto visivel dos links de navegação, por exemplo 'Listas', é texto do link que abre a pagina
+gerada por lists.php, 'Nova Lista' é o texto do link que abre a pagina de criar nova lista,
+'Tarefas' é o texto visivel do link que edita tarefas em uma lista em particular.
+O metodo começa criando uma lista com o metodo createList() da classe ListsPage, depois
+a pagina gerada por tasks.php e carregada e usamos o metodo getNavLinks() para obter os links
+do elemento <header> na classe List de java, em seguida o link 'Nova Lista' e salvo em
+newListLink, depois o link 'Tarefas' e salvo em tasksLink e por ultimo o link 'Listas' e
+salvo em listsLink usando o metodo get() da classe List.
+Nas ultimas três linhas os testes são aplicados. Usando o metodo getText() de cada link
+para obter o texto visivel do link e compara com o valor que esperamos que cada link
+possua usando containsIgnoreCase().
+
+
+    @Test
+    void shouldExistNavLinkForListsWhenListsPageLoad() {
+        new NewListPage(driver).createList("Lista de ferramentas");
+        var listsPage = new ListsPage(driver);
+        var navLinks = listsPage.getNavLinks();
+        var newListLink = navLinks.get(0);
+        var tasksLink = navLinks.get(1);
+        var listsLink = navLinks.get(2);
+
+        assertThat(newListLink.getText()).containsIgnoringCase("Nova Lista");
+        assertThat(listsLink.getText()).containsIgnoringCase("Listas");
+        assertThat(tasksLink.getText()).containsIgnoringCase("Tarefas");
+    }
+
+
+b) shouldHaveListContainerWhenListsPageLoad() é usado para checar a existencia do
+elemento <ul> na pagina e que o elemento deva estar habilitado na pagina gerada por lists.php
+(plural). Como setUp() carrega a pagina gerada por list.php (singular), precisamos carregar a pagina
+gerada por lists.php, para isso chamamos get() com a URL e a variavel action com o valor da pagina
+que queremos carregar 'lists', nesse caso. Depois que a pagina carrega onde queremos, instanciamos
+um objeto da classe ListsPage para obter o elemento <ul>, então usamos isEnabled() que diz se o elemento
+esta presente e habilitado na pagina quando retorna true, false caso contrario. assertThat() e isTrue()
+avaliam o resultado do teste.
+
+    @Test
+    void shouldHaveListContainerWhenListsPageLoad() {
+        driver.get("localhost:8000/?action=lists");
+        var listsPage = new ListsPage(driver);
+        assertThat(listsPage.getListsContainer().isEnabled()).isTrue();
+    }
+
+
+
+c) O metodo shouldHaveTheNamesOfTheListsCreatedWhenListsPageLoad() verifica se
+as listas criadas são carregas na pagina gerada por lists.php (plural), como testes
+não devem interferir um com o outro, precisamos criar as listas aqui e testar
+se servidor mostra elas na pagina gerada por lists.php. Por tanto devemos
+recarregar a pagina para criar lista (list.php) toda vez. usando o metodo get() do objeto
+driver.
+Salvamos a URL onde a pagina gerada por list.php carrega na variavel url. Em seguida criamos
+três listas usando o metodo createList() da classe NewListPage como suporte. Não é preciso
+obter os elemento individualmente aqui porque já fizemos isso em outros testes.
+
+Depois de criar as listas Lista de compras, Ingredientes da recita de bolo, Peças para
+concertar no carro, carregamos a pagina gerada por lists.php usando driver.get(url + "/?action=lists")
+para poder checar se as listas que criamos serão carregadas na pagina lists.php.
+Para isso é que existe a variavel listNames obtidas usando o metodo getListNames() da
+classe ListsPage criado anteriormente.
+
+A variavel listNames é uma java List objeto, uma vez que os nomes das listas de tarefas são salvos
+no banco de dados em ordem, podemos usar o metodo get() de List e o indice da lista para obter o
+elemento que contem o nome da lista de tarefas e assim extrair o texto visivel com getText()
+assertThat() e containsIgnoreCase() avaliam se o resultado, ignorando maiusculas e minusculas,
+estão corretos.
+
+
+    @Test
+    void shouldHaveTheNamesOfTheListsCreatedWhenListsPageLoad() {
+        String  url = "localhost:8000";
+        new NewListPage(driver).createList("Lista de compras");
+
+        driver.get(url);
+        new NewListPage(driver).createList("Ingredientes da receita de bolo");
+
+        driver.get(url);
+        new NewListPage(driver).createList("Peças para concertar no carro");
+
+        driver.get(url + "/?action=lists");
+        var listsPage = new ListsPage(driver);
+        var listNames = listsPage.getListNames();
+
+        assertThat(listNames.get(0).getText()).containsIgnoringCase("lista de compras");
+        assertThat(listNames.get(1).getText()).containsIgnoringCase("Ingredientes da receita de bolo");
+        assertThat(listNames.get(2).getText()).containsIgnoringCase("peças para concertar no carro");
+    }
+
+d) O metodo shouldHaveTheNumberOfTasksOnEachListWhenListsExistsOnPage() checar se o numero de
+tarefas na pagina são autenticos. Para isso cria uma lista, 'Lista de compras', nessa lista
+insere três tarefas, comprar leite, comprar ovos, comprar açúcar, ou seja espera-se que o
+numero de tarefas na 'Lista de compras' seja igual a 3.
+Como antes criamos um objeto para cada tarefa com createTask() da classe TasksPage, porque
+a pagina recarrega. Isso é diferente com React por exemplo.
+Depois de criar a lista e as tarefas usamos driver.get("localhost:8000/?action=lists") para
+carregar a pagina com as listas, nesse caso apenas uma. ListsPage é usada para obter o
+elemento que contem o numero de tarefas na pagina gerada por lists.php.
+O metodo getNumberOfTasksPerList() filtra o elemento que queremos e o teste e avaliado em
+assertThat() depois de usarmos getText() para obter o texto visivel na pagina.
+
+    @Test
+    void shouldHaveTheNumberOfTasksOnEachListWhenListsExistsOnPage() {
+        new NewListPage(driver).createList("Lista de compras");
+        new TasksPage(driver).createTask("Comprar leite");
+        new TasksPage(driver).createTask("Comprar açúcar");
+        new TasksPage(driver).createTask("Comprar ovos");
+
+        driver.get("localhost:8000/?action=lists");
+        var listsPage = new ListsPage(driver);
+        var numberOfTasksPerListParagraphs = listsPage.getNumberOfTasksPerList();
+        assertThat(numberOfTasksPerListParagraphs.get(0).getText()).containsIgnoringCase("3");
+    }
+
+
+ Isso conclui os testes usando selenium.
+ Para executar todos os testes criados usando maven certifique que o container com mysql
+ esta executando como instruido antes, alem de o servidor de paginas estar executando
+ tambem e não esqueça que o terminal deve esta na raiz do projeto.
+
+Os comando necessarios estão a seguir:
+
+ $ sudo systemctl start docker
+ $ docker-compose down
+ $ docker-compose up -d
+ $ composer run dev
+
+ Abra outro terminal e var para a pasta do projeto usando o comando cd caminho-para-pasta-do-projeto
+ $ composer run functional-test # como em composer.json
+
+ Se encontrar algum problem tente compara seu codigo com o codigo do repositorio github em
+https://github.com/marcelo-tech/ListasDeTarfeasComPHP ou use git clone:
+$ git clone https://github.com/marcelo-tech/ListasDeTarfeasComPHP.git
+
+Executei os passo para ter certeza que os testes estão funcionando.
+
+Para entendimento completo dos assuntos mostrados aqui recomendo os livros a seguir:
+
+PHP CRASH COURSE - MATT SMITH
+PHP and MySQL - Christian Wenz, Tobias Hauser
+Java 23 for Absolute Beginners - Iuliana Cosmina
+Java Testing with Selenium - Sujay Raghavendra
+Hands-On Selenium WebDriver with Java - Boni García
+
+
