@@ -26,35 +26,49 @@ Usuarios de Ubuntu podem instalar esses IDE a partir do App Store
 
 - java, javac comandos para executar java bytecode e compilar java codigo.
 Versão mais estavel é a 21 e sera usada para testar o projeto.
-$ sudo apt install openjdk-21-jdk
+```bash
+sudo apt install openjdk-21-jdk
+```
 
 - maven è um app que gerência pacotes em Java e pode ser instalado com
-$ sudo apt install maven
+```bash
+sudo apt install maven
+```
 
 - PHP é o interpretador da linguagem, geralmente já vem instalado.
-$ sudo apt install php
+```bash
+sudo apt install php
+```bash
 
 - composer é um app que gerência pacotes em PHP e pode ser instalado com
-$ sudo apt install composer
-
+```bash
+sudo apt install composer
+```
 - php-mysql é um driver necessario para PHP se comunicar com MySQL (banco de dados)
-$ sudo apt install php-mysql
+```bash
+sudo apt install php-mysql
+```
 
 - docker.io, docker-compose é o mais usado para gerênciar container (um tipo de maquina virtual)
 que torna fácil usar MySql e outros servidores sem precisar instalar programas no computador.
 Também é muito popular para trabalhar com desenvolvimento na nuvem (deploy).
-$ sudo apt install docker.io docker-compose
+```bash
+sudo apt install docker.io docker-compose
+```
 
 
 # Criando diretorios para o projeto.
 Precisamos de lugar lugar para criar esse projeto, eu coloco na pasta Projects em $HOME
-$ mkdir $HOME/Projects
-$ cd $HOME/Projects
-$ mkdir ListaDeTarefas
-$ cd ListaDeTarefas
-$ mkdir -p public templates app/controller app/repository
-$ mkdir -p tests/Unit scripts
-$ code . # abre vscode no diretorio atual, raiz do projeto. tambem $ idea . # para intellij idea.
+
+```bash
+ mkdir $HOME/Projects
+cd $HOME/Projects
+mkdir ListaDeTarefas
+cd ListaDeTarefas
+mkdir -p public templates app/controller app/repository
+mkdir -p tests/Unit scripts
+code . # abre vscode no diretorio atual, raiz do projeto. tambem $ idea . # para intellij idea.
+```
 
 # Criando script para criar java projetos mais fácilmente.
 Crie o arquivo create-java-app na pasta tests e deixe-o como abaixo:
@@ -91,21 +105,26 @@ E uma simple bash script que usa maven para criar uma estrutura para
 o projeto de forma padrão.
 
 Agora na linha de comando, execute o seguinte:
-$ cd tests
-$ bash create-java-app Functional com.functional.todo
+```bash
+cd tests
+bash create-java-app Functional com.functional.todo
+```
 
 Resumo:
 Functional é o nome artifact, com.functional.todo é um nome
 de pacote em java terminologia, ou seja, maven vai criar uma pasta chamada Functional
 na pasta tests e dentro da pasta Functional maven vai criar um esboço do projeto.
-Por exemplo: os arquivos src/main/java/com/functional/todo/App.java,
-  src/test/java/com/functional/todo/AppTest.java serão criado automaticamente.
+Por exemplo: os arquivos ***src/main/java/com/functional/todo/App.java***,
+***src/test/java/com/functional/todo/AppTest.java*** serão criado automaticamente.
 
 Essa parte do projeto é para executar testes automatizados usando selenium,
 java, maven, junit5, ...
-O arquivo pom.xml é criado automaticamente na pasta tests/Functional/ e precisar
+O arquivo **pom.xml** é criado automaticamente na pasta ***tests/Functional/*** e precisar
 de algumas edições. De volta para a raiz do projeto.
-$ cd .. 
+
+```bash
+cd .. 
+```
 
 # Editando o arquivo pom.xml
 Para usar selenium, junit5 nesse projeto precisamos incluir algumas dependências no arquivo
@@ -216,14 +235,17 @@ O destaque desse arquivo é o elemento <dependencies> que inclui selenium automa
 junit5, assertj.
 
 Ainda na pasta tests na linha de comando execute o seguinte para testar se tudo estar funcionando.
+```bash
 $ cd tests/Functional
 $ mvn test
+```
 
 Os tests devem passar, porque maven criar-os automaticamente na pasta src/test/java/com/functional/todo/AppTest.java
 
 De volta para a raiz do projeto agora:
-
+```bash
 $ cd ../..
+```
 
 # Criando o arquivo compose.yaml para MYSQL container
 Na raiz do projeto crie um arquivo chamado compose.yaml com o seguinte conteudo:
@@ -275,16 +297,27 @@ comando vaz isso automaticamente.
 
 Então vamos iniciar o servidor mysql:
 Na raiz do projeto e na linha de comando.
-$ docker-compose up -d
+```bash
+docker-compose up -d
+```
+
 ou em alguns sistemas:
-$ docker compose up -d
+```bash
+docker compose up -d
+```
 
 O container vai levar um tempo baixando a imagem e iniciando o container ...
 Se estiver tudo certo o container estara executando no modo deamon/background
 de qualquer forma voçê pode checar executando os seguintes comandos.
+```bash
 $ docker ps
+```
+
 lista os containers atualmente executando, um por linha, deve haver apenas um.
+```bash
 $ docker ps -a
+```
+
 lista todos os containers, inclusive os que estão parados.
 
  Para para o container do mysql, sem perder todos os dados, use o seguinte.
