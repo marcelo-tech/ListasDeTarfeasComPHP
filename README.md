@@ -1,4 +1,4 @@
-
+# Lista De Tarefas App (Todo app)
 Nota:
       O projeto a seguir foi criado no sistema Kali Linux então algumas diferenças
       em como instalar apps pode ser diferentes, mesmo em sistemas como Ubuntu, ou
@@ -12,7 +12,7 @@ Quando disser para executar comando sem especificar a pasta presumi-se
 que comando deve ser executado na raiz do projeto.
 
 
-0. Instalando o software necessario para criar o projeto.
+# Instalando o software necessario para criar o projeto.
 Para criar esse projeto precisamos dos seguintes apps instalados:
 docker, docker-compose, php, php-mysql, openjdk-21-jdk, maven,
 composer, firefox, visual studio code ...
@@ -46,7 +46,7 @@ Também é muito popular para trabalhar com desenvolvimento na nuvem (deploy).
 $ sudo apt install docker.io docker-compose
 
 
-1. Criando diretorios para o projeto.
+# Criando diretorios para o projeto.
 Precisamos de lugar lugar para criar esse projeto, eu coloco na pasta Projects em $HOME
 $ mkdir $HOME/Projects
 $ cd $HOME/Projects
@@ -56,7 +56,7 @@ $ mkdir -p public templates app/controller app/repository
 $ mkdir -p tests/Unit scripts
 $ code . # abre vscode no diretorio atual, raiz do projeto. tambem $ idea . # para intellij idea.
 
-2. Criando script para criar java projetos mais fácilmente.
+# Criando script para criar java projetos mais fácilmente.
 Crie o arquivo create-java-app na pasta tests e deixe-o como abaixo:
 ```bash
 #!/usr/bin/bash --
@@ -104,11 +104,10 @@ Por exemplo: os arquivos src/main/java/com/functional/todo/App.java,
 Essa parte do projeto é para executar testes automatizados usando selenium,
 java, maven, junit5, ...
 O arquivo pom.xml é criado automaticamente na pasta tests/Functional/ e precisar
-de algumas edições.
+de algumas edições. De volta para a raiz do projeto.
+$ cd .. 
 
-$ cd .. # de volta para a raiz do projeto.
-
-3. Editando o arquivo pom.xml
+# Editando o arquivo pom.xml
 Para usar selenium, junit5 nesse projeto precisamos incluir algumas dependências no arquivo
 pom.xml. abra o arquivo tests/Functional/pom.xml deixe o arquivo pom.xml como a seguir:
 ```xml
@@ -224,9 +223,9 @@ Os tests devem passar, porque maven criar-os automaticamente na pasta src/test/j
 
 De volta para a raiz do projeto agora:
 
-$ cd ../.. # de volta para a raiz do projeto.
+$ cd ../..
 
-4. Criando o arquivo compose.yaml para MYSQL container
+# Criando o arquivo compose.yaml para MYSQL container
 Na raiz do projeto crie um arquivo chamado compose.yaml com o seguinte conteudo:
 ```yaml
 # compose.yaml
@@ -340,7 +339,7 @@ $ docker volume ls # para exibir o nome do volume
 $ docker volume rm nome-do-volume
 
 
-5. Criando o arquivo de configuração de composer
+# Criando o arquivo de configuração de composer
 Crie um arquivo chamado composer.json na raiz do projeto com o seguinte conteudo.
 ```json
 {
@@ -393,7 +392,7 @@ Para instalar as dependências, faça como a seguir.
 $ composer install
 $ composer dump-autoload
 
-6. Arquivo de configuração de phpunit.
+# Arquivo de configuração de phpunit.
 Crie um arquivo na raiz do diretorio com nome phpunit.xml com o seguinte
 conteudo:
 ```xml
@@ -426,7 +425,7 @@ significa que o resultado do processo sera colorido.
 Entre outras coisas, o arquivo tambem referência o diretorio app no elemento
 <source>.
 
-7. Criando o ponto de entrada do app.
+# Criando o ponto de entrada do app.
 Crie o arquivo index.php na pasta public e escreve o seguinte.
 ```php
 <?php
@@ -455,7 +454,7 @@ diretorio pode ser encontrado pelo browser. O que significa uma potencial brecha
 se voçê incluir um arquivo errado.
 
 
-8. Criando a classe Application
+# Criando a classe Application
 Crie um arquivo na pasta app com o nome Application.php e inclua nela o seguintes conteudo.
 ```php
 <?php
@@ -544,7 +543,7 @@ tomar.
 
 
 
-9. Criando a classe ListController.
+# Criando a classe ListController.
 Crie um arquivo ListController.php na pasta app/controller com o seguinte conteudo.
 ```php
 <?php
@@ -1101,7 +1100,7 @@ Isso conclui a explicação da classe ListController, a seguir vamos ver ListRep
         require_once $path;
     }
 
-10. criando a classe ListRepository
+# criando a classe ListRepository
 Crie um arquivo com nome ListRepository.php na pasta app/repository com o seguinte conteudo.
 ```php
 <?php
@@ -1715,7 +1714,7 @@ $stmt->pdo->prepare($rebootTasksIdCounter) para reiniciar o id depois de executa
         }
     }
 
-11. Criando o arquivo createDatabase.php
+# Criando o arquivo createDatabase.php
 Crie o arquivo createDatabase.php na pasta scripts com o seguinte conteudo.
 ```php
 <?php
@@ -1889,7 +1888,7 @@ $ docker-compose exec db mysql -u user -ppassword
 para conectar com mysql dentro do container.
 
 
-12. Criando templates para gerar as paginas.
+# Criando templates para gerar as paginas.
 Crie o arquivo head.php na pasta templates com o seguinte conteudo:
 ```html
 <head>
@@ -1950,7 +1949,7 @@ c) .hover:hover { opacity: 0.7; } - quando esse classe é aplicada a um elemento
 do elemento para 70% quando o mouse passa sobre o elemento.
 
 
-13. Criando header.php template.
+# Criando header.php template.
 O codigo a seguir sera compartilhado por todas as paginas usando require_once :
 Crie um arquivo chamado header.php na pasta templates como antes com o seguinte conteudo:
 ```html
@@ -2049,7 +2048,7 @@ links para isso funcionar.
 ```
 
 
- 14. Criando o template da pagina para criar listas.
+# Criando o template da pagina para criar listas.
  Crie um arquivo chamado list.php na pasta templates com o seguinte conteudo.
 ```html
  <!-- templates/list.php -->
@@ -2135,7 +2134,7 @@ A array $errors foi mostrada antes, ele fica vaziam se não over errors.
 
 
 
- 15. Criando a pagina para mostar todas as listas criadas
+# Criando a pagina para mostar todas as listas criadas
  Crie um arquivo com nome lists.php, com 's' plural de list, na pasta templates como os outros
  templates, é claro.
  Insira o seguinte conteudo:
@@ -2222,7 +2221,7 @@ classe, quanto mais colunas, mais espaço o elemento vai ocupar.
 
 
 
- 16. Criando o rodape da pagina
+# Criando o rodape da pagina
  Crie o arquivo footer.php na pasta templates com o seguinte conteudo.
 
  <footer class="fixed-bottom bg-dark text-white-50 p-2">&copy; 2026 All Rights Reserved.</footer>
@@ -2234,7 +2233,7 @@ classe, quanto mais colunas, mais espaço o elemento vai ocupar.
 
 
 
- 17. Criando a pagina para criar tarefas
+# Criando a pagina para criar tarefas
  Crie um arquivo chamado tasks.php na pasta templates com o conteudo a seguir:
 ```php
  <?php
@@ -2373,7 +2372,7 @@ Nota: Referências sobre pastas e comando executados na linha de comando serão 
 raiz do projeto, exatamente o mesmo diretorio de antes, por exemplo: app/controller, tests/Unit
 tests/Functional, app/repository, ...
 
- 1. Criando a classe para obter os elementos da pagina list.php
+# Criando a classe para obter os elementos da pagina list.php
 Crie o arquivo NewListPage.java na pasta tests/Functional/src/main/java/com/functional/todo
 com o conteudo como a seguir:
 
@@ -2556,7 +2555,7 @@ novo e de novo a medida que mais e mais codigo é criado.
 
 
 
- 2. Criando a classe NewListTest que usa a classe NewListPage
+# Criando a classe NewListTest que usa a classe NewListPage
  Usando como referência o diretorio do projeto original crie o arquivo NewListTest.java
  na pasta testes/Functional/src/test/java/com/functional/todo com o conteudo a seguir:
 
@@ -2778,7 +2777,7 @@ pode interferir nos testes.
 Para executar os testes, a partir da raiz do projeto, execute o seguinte:
 $ composer run functional-test # executa testes usando junit e selenium
 
- 3. Criando a classe TasksPage para testar a pagina de criar tarefas.
+# Criando a classe TasksPage para testar a pagina de criar tarefas.
  Adicione o conteudo a seguir no arquivo TasksPage.java na pasta
  testes/Functional/src/main/java/com/functional/todo/TasksPage.java
 
@@ -2870,7 +2869,7 @@ Os metodos são getters e setters basicamente, e o construtor configura a variav
 driver.
 
 
- 4. Criando a classe TasksTest para testar a pagina em tasks.php
+# Criando a classe TasksTest para testar a pagina em tasks.php
  Adicione o conteudo a seguir no arquivo TasksTest.java na pasta
  testes/Functional/src/test/java/com/functional/todo/TasksTest.java
 
@@ -3366,7 +3365,7 @@ obter o valor do atributo class, então comparamos com o valor "task-done" de he
 
 
 
-5. Criando a classe ListsPage para obter os elementos da pagina gerada por lists.php
+# Criando a classe ListsPage para obter os elementos da pagina gerada por lists.php
 Crie o arquivo ListsPage.java na pasta testes/Functional/src/main/java/com/functional/todo
 ```java
 // ListsPage.java
@@ -3443,7 +3442,7 @@ obter o numero de tarefa por lista, ou o elemento que contem a informação.
 
 
 
-6. Criando a classe ListsTest para testar a pagina gerada por lists.php
+# Criando a classe ListsTest para testar a pagina gerada por lists.php
 Crie o arquivo ListsTest.java na pasta testes/Functional/src/test/java/com/functional/todo
 com o conteudo a seguir.
 ```java
