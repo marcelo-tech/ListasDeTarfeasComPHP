@@ -1,13 +1,15 @@
 # Lista De Tarefas App (Todo app)
-Nota:
+**Nota:**
       O projeto a seguir foi criado no sistema Kali Linux então algumas diferenças
       em como instalar apps pode ser diferentes, mesmo em sistemas como Ubuntu, ou
       debian e seus descendentes.
       Se um app não pode ser instalado como mostrado a baixo, então tente
+      ```bash
       $ apt search nome-do-app-ou-program
+      ```
 
 Preliminares:
-$ cmd - significa executar comando na linha de comando.
+$ comando - significa executar comando na linha de comando.
 Quando disser para executar comando sem especificar a pasta presumi-se
 que comando deve ser executado na raiz do projeto.
 
@@ -26,52 +28,52 @@ Usuarios de Ubuntu podem instalar esses IDE a partir do App Store
 
 - java, javac comandos para executar java bytecode e compilar java codigo.
 Versão mais estavel é a 21 e sera usada para testar o projeto.
+
 ```bash
-sudo apt install openjdk-21-jdk
+$ sudo apt install openjdk-21-jdk
+
+# maven è um app que gerência pacotes em Java e pode ser instalado com
+
+$ sudo apt install maven
+
+# PHP é o interpretador da linguagem, geralmente já vem instalado.
+
+$ sudo apt install php
+
+# composer é um app que gerência pacotes em PHP e pode ser instalado com
+
+$ sudo apt install composer
+
+# php-mysql é um driver necessario para PHP se comunicar com MySQL (banco de dados)
+
+$ sudo apt install php-mysql
+
+$ sudo apt install docker.io docker-compose
+
 ```
 
-- maven è um app que gerência pacotes em Java e pode ser instalado com
-```bash
-sudo apt install maven
-```
 
-- PHP é o interpretador da linguagem, geralmente já vem instalado.
-```bash
-sudo apt install php
-```bash
-
-- composer é um app que gerência pacotes em PHP e pode ser instalado com
-```bash
-sudo apt install composer
-```
-- php-mysql é um driver necessario para PHP se comunicar com MySQL (banco de dados)
-```bash
-sudo apt install php-mysql
-```
-
-- docker.io, docker-compose é o mais usado para gerênciar container (um tipo de maquina virtual)
-que torna fácil usar MySql e outros servidores sem precisar instalar programas no computador.
-Também é muito popular para trabalhar com desenvolvimento na nuvem (deploy).
-```bash
-sudo apt install docker.io docker-compose
-```
-
+***docker.io, docker-compose é o mais usado para gerênciar container.
+que torna fácil usar MySql e outros servidores sem precisar instalar programas no computador.***
 
 # Criando diretorios para o projeto.
 Precisamos de lugar lugar para criar esse projeto, eu coloco na pasta Projects em $HOME
 
 ```bash
- mkdir $HOME/Projects
-cd $HOME/Projects
-mkdir ListaDeTarefas
-cd ListaDeTarefas
-mkdir -p public templates app/controller app/repository
-mkdir -p tests/Unit scripts
-code . # abre vscode no diretorio atual, raiz do projeto. tambem $ idea . # para intellij idea.
+$ mkdir $HOME/Projects
+$ cd $HOME/Projects
+$ mkdir ListaDeTarefas
+$ cd ListaDeTarefas
+$ mkdir -p public templates app/controller app/repository
+$ mkdir -p tests/Unit scripts
+$ code . # abre vscode no diretorio atual, raiz do projeto.
+# se voçê esta usando itellij
+$ idea .
 ```
 
 # Criando script para criar java projetos mais fácilmente.
 Crie o arquivo create-java-app na pasta tests e deixe-o como abaixo:
+
 ```bash
 #!/usr/bin/bash --
 # path: tests/create-java-app
@@ -1401,15 +1403,15 @@ usamos PDO classe do nucleo de PHP, que centraliza conexão com varios banco de
 dados como mysql, sqlite3, postgresql, etc.
 
 As constantes:
-MYSQL_DATABASE - contem o nome do banco de dados, igual ao nome no arquivo compose.yaml
-MYSQL_USER - nome do usuario
-MYSQL_PASSWORD - senha de 'user'
-MYSQL_POST - porta do servidor mysql
-MYSQL_HOST - endereço do servidor.
-LISTS_TABLE - nome da tabela de listas de tarefas.
-TASKS_TABLE - nome da tabela de tarefas.
-LISTS_FIELDS - nome dos campos, ou coluna na tabela LISTS_TABLE
-TASKS_FIELDS - nome das colunas, ou campos na tabela de tarefas
+- MYSQL_DATABASE - contem o nome do banco de dados, igual ao nome no arquivo compose.yaml
+- MYSQL_USER - nome do usuario
+- MYSQL_PASSWORD - senha de 'user'
+- MYSQL_POST - porta do servidor mysql
+- MYSQL_HOST - endereço do servidor.
+- LISTS_TABLE - nome da tabela de listas de tarefas.
+- TASKS_TABLE - nome da tabela de tarefas.
+- LISTS_FIELDS - nome dos campos, ou coluna na tabela LISTS_TABLE
+- TASKS_FIELDS - nome das colunas, ou campos na tabela de tarefas
 
 $pdo - variavel que contem a conexão com o banco de dados, MySQL, para que não
 precisamos reinicia-la toda vez.
@@ -1422,7 +1424,7 @@ e a senha.
 Se uma exceção for lançada, imprimimos uma mensagem de erro e terminamos o processo.
 Tambem caracteres especiais (<,&,etc.) são tratados adequadamente com a função
 htmlspecialchars().
-
+```php
     function __construct()
     {
         $dsn = "mysql:dbname=" . $this::MYSQL_DATABASE . ";host=" . $this::MYSQL_HOST;
@@ -1436,7 +1438,7 @@ htmlspecialchars().
             die;
         }
     }
-
+```
 
 - A função printErrorMessage() simplesmente mostra um mensagem de error no browser, quando
 uma falha ocorre num processo para acessar o banco de dados.
@@ -1452,7 +1454,7 @@ A seguir executamos de fato o comando, que é enviado para o banco de dados.
 Se uma exceção ocorre nesse processo, nos capturamos e imprimimos uma mensagem que vai para o
 browser, em seguida terminamos o processo.
 Do contrario uma nova entrada na tabela lists e criada.
-
+```php
     function createList(string $name) {
         $sql = "INSERT INTO " . ListRepository::LISTS_TABLE . "(name) VALUES(:name)";
 
@@ -1465,6 +1467,7 @@ Do contrario uma nova entrada na tabela lists e criada.
             die;
         }
     }
+```
 
 - createTask(string $name, int $list_id)
 O metodo createTask() é responsavel por criar um tarefa na tabela 'tasks' usando o nome
@@ -1477,7 +1480,7 @@ os guardadores de lugar, placeholders, com o valor que queremos inserir na tabel
 bindParam() como antes. finalmente o comando é executado com o metodo execute().
 Capturamos as exceções em 'catch' para exibir uma mensagem de error adequada e terminar de forma
 limpa.
-
+```php
     function createTask(string $name, int $list_id) {
         $sql = "INSERT INTO " . $this::TASKS_TABLE . "(name, list_id) VALUES(:name, :list_id)";
 
@@ -1492,7 +1495,7 @@ limpa.
         }
     }
 
-
+```
 - findListByName(string $name)
 O metodo findListByName() é responsavel por achar uma lista, no banco de dados, por nome.
 Salvamos o comando para ser executado no banco de dados em $sql. Desta vez vamos pesquisar
@@ -1512,7 +1515,7 @@ no browser e o processo inteiro, sera terminado, (die = morra).
 Se a operação terminar com sucesso em try retornamos o nome da lista em $list. Se a lista não existir
 no banco de dados, retornamos false ou nulo na variavel $list.
 
-
+```php
     function findListByName(string $name) {
         $sql = "SELECT * FROM " . $this::LISTS_TABLE . " WHERE name = :name";
         $list = null;
@@ -1530,7 +1533,7 @@ no banco de dados, retornamos false ou nulo na variavel $list.
         return $list;
     }
 
-
+```
 - getTasks()
 A função getTasks(), metodo na verdade, carrega toda a tabela de uma so vez em $tasks array.
 A declaração em $sql faz isso. Ela encontra todas as tarefas de uma lista, usando o id da lista
@@ -1542,7 +1545,7 @@ daria no mesmo resultado.
 Se uma exceção for lançada, capturamos com catch, para tratar do erro.
 Se hover tarefas com coluna list_id igual a $list_id elas serão retornadas em $tasks, se não hover
 uma array fazia sera retornada.
-
+```php
 
     function getTasks(int $list_id) {
         $sql = "SELECT * FROM " . $this::TASKS_TABLE . " WHERE list_id = :list_id";
@@ -1562,7 +1565,7 @@ uma array fazia sera retornada.
 
         return $tasks;
     }
-
+```
 
 - deleteTask()
 O metodo deleteTask() deve ser chamada com o id da tarefa, $id, e o id da lista, $list_id para
@@ -1572,6 +1575,7 @@ excluir a tarefa.
 No bloco try, depois de preparar o comando, substituimos :id com o id da tarefa e :list_id com
 o id da lista usando bindParam(), depois a operação é executada com execute().
 
+```php
     function deleteTask(int $id, int $list_id) {
         $sql = "DELETE FROM " . $this::TASKS_TABLE . " WHERE id = :id AND list_id = :list_id";
 
@@ -1586,6 +1590,7 @@ o id da lista usando bindParam(), depois a operação é executada com execute()
         }
     }
 
+```
 
 - deleteList()
 O metodo deleteList() remove listas do banco de dados usando seu nome, $listName, DELETE é
@@ -1593,7 +1598,7 @@ usado como antes, assim como WHERE para filtrar a exclusão para apenas uma list
 não for inserida, todas as entradas serão removidas.
 O bloco try é como antes, insere o nome da lista, $listName, no comando e execute. Mensagem de
 erros são capturadas e exibidas.
-
+````php
     function deleteList(string $listName) {
         $sql = "DELETE FROM " . $this::LISTS_TABLE . " WHERE name = :name";
 
@@ -1606,7 +1611,7 @@ erros são capturadas e exibidas.
             die;
         }
     }
-
+```
 
 - findTaskById()
 O metodo findTaskById() recebe o id de uma tarefa e pesquisa no banco de dados, usando SELECT
@@ -1834,6 +1839,7 @@ dados, tambem passamos nome de usuario e senha para o construtor da classe PDO.
 O banco de dados é criado com a execução do metodo execute().
 Se hover algum erro, imprimimos no terminal on print_r para solucionar o problema.
 
+```php
 function createDatabase() {
     $sql = "CREATE DATABASE IF NOT EXISTS todolists";
 
@@ -1846,6 +1852,7 @@ function createDatabase() {
         exit(1);
     }
 }
+```
 
 b) createTableLists()
 A função createTableLists() cria a tabela lists no banco de dados todolists usando um comando como o anterior.
@@ -1858,7 +1865,7 @@ no argumento dsn da classe PDO, como antes o nome de usuario e a senha tambem s�
 Finalmente a tabela é criada com $stmt->execute().
 Mensagem de erro são imprimidas no terminal.
 
-
+```php
 function createTableLists() {
     $sql = "CREATE TABLE IF NOT EXISTS lists(id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(150))";
 
@@ -1871,6 +1878,7 @@ function createTableLists() {
         exit(1);
     }
 }
+```
 
 c) createTableTasks()
 Cria a tabela 'tasks' para armazenar tarefas, ou dados das tarefas. Essa tabela tem mais campos que a
@@ -1891,6 +1899,7 @@ excluida MySQL deve excluir todas as tarefas na tabela tasks com o correspondent
 No bloco try criamos uma instancia da classe PDO como antes e criamos a tabela com
 $stmt->execute(). Se hover erros, então são imprimidos no terminal, como antes.
 
+```php
 createTableTasks() {
     $sql = "CREATE TABLE IF NOT EXISTS tasks(
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -1909,6 +1918,7 @@ createTableTasks() {
         exit(1);
     }
 }
+```
 
 d) Executando as funções.
 Essa parte executa as funções criadas anteriormente.
@@ -1917,23 +1927,25 @@ createDatabase();
 createTableTasks();
 createTableLists();
 
-Para concluir, na linha de comando e na pasta raiz do projeto, onde esta compose.yaml, etc.
-Execute os seguintes comandos:
-Nota: se docker não estiver executando, use $ sudo systemctl start docker
+Para concluir, na linha de comando e na pasta raiz do projeto, onde esta compose.yaml
+Execute:
 
+```bash
+$ sudo systemctl start docker
 
 $ docker-compose down
-limpa containers que possa existir anteriormente
+# limpa containers que possa existir anteriormente
 
 $ docker-compose up -d
-inicia o servidor mysql no container
+# inicia o servidor mysql no container
 
 $ php scripts/createDatabase.php
-criar o banco de dados e as tabelas tasks, lists com o script de antes.
+# criar o banco de dados e as tabelas tasks, lists com o script de antes.
 
 $ docker-compose exec db mysql -u user -ppassword
-para conectar com mysql dentro do container.
+# para conectar com mysql dentro do container.
 
+```
 
 # Criando templates para gerar as paginas.
 Crie o arquivo head.php na pasta templates com o seguinte conteudo:
