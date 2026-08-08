@@ -321,14 +321,19 @@ $ docker ps -a
 lista todos os containers, inclusive os que estão parados.
 
  Para para o container do mysql, sem perder todos os dados, use o seguinte.
+ ```bash
  $ docker-compose stop
-
+```
  Para iniciar novamente
+ ```bash
  $ docker-compose up -d
+```
 
  Para conectar a mysql na linha de comando dentro do container executando, com o usuario user
  senha password, execute:
+ ```bash
  $ docker-compose exec db mysql -u user -ppassword
+```
 
 exec - sub comando do docker que executa comandos dentro do container.
 db - nome do servico no arquivo compose.yaml
@@ -341,7 +346,10 @@ Use 'exit' para sair.
 
 voçê pose executar qualquer comando valido. Por exemplo:
 primeiro log como root (sem espaço entre a senha e a opção -p):
+```bash
 $ docker-compose exec db mysql -prootpassword
+```
+```sql
 mysql> SHOW DATABASES;
 mysql> CREATE DATABASE IF NOT EXISTS mydb;
 mysql> USE mydb;
@@ -350,27 +358,32 @@ mysql> SHOW COLUMNS FROM mytable;
 mysql> INSERT INTO mytable(nome, sobrenome) VALUES('john', 'doe');
 mysql> SELECT * FROM mytable;
 mysql>EXIT;
+```
 
 Para para o servidor:
+```bash
 $ docker-compose stop
+```
+
 Nota: (docker-compose down) vai excluir o volume mysql_data e os dados (tabelas banco de dados) serão perdidos.
 Use esse comando para re-iniciar se hover algum error.
 
 Para remover containers pendentes que possam interferir com o desenvolvimento use:
+```bash
 $ docker stop $(docker ps -q) # para todo containers
 $ docker rm $(docker ps -aq)  # remove todos os container
 
-Para mostar as imagens no seu HD use:
+# Para mostar as imagens no seu HD use:
 $ docker images
 
-Para excluir uma imagem
+# Para excluir uma imagem
 $ docker images # para exibir nomes das imagens
 $ docker image rm nome-da-image
 
-Para excluir um volume
+# Para excluir um volume
 $ docker volume ls # para exibir o nome do volume
 $ docker volume rm nome-do-volume
-
+```
 
 # Criando o arquivo de configuração de composer
 Crie um arquivo chamado composer.json na raiz do projeto com o seguinte conteudo.
@@ -408,25 +421,28 @@ Crie um arquivo chamado composer.json na raiz do projeto com o seguinte conteudo
 ```
 
 Pronto. Salve o arquivo.
-autoload - namespace mapeamento para a pasta app.
-Por exemplo, uma classe na pasta app tem um namespace como namespace App\MyClass.
-autoload-dev - namespace para testes na pasta tests.
-require-dev - dependência da phase de desenvolvimento apenas. que inclui
-phpunit para testes automatizados.
-scripts - permite executar comando usando composer.
-Por exemplo, para executar testes usando selenium:
+
+- autoload - namespace mapeamento para a pasta app.
+- Por exemplo, uma classe na pasta app tem um namespace como namespace App\MyClass.
+- autoload-dev - namespace para testes na pasta tests.
+- require-dev - dependência da phase de desenvolvimento apenas. que inclui
+- phpunit para testes automatizados.
+- scripts - permite executar comando usando composer.
+- Por exemplo, para executar testes usando selenium:
+```bash
 $ composer run functional-test
-Para iniciar o servidor de PHP na pasta public:
+# Para iniciar o servidor de PHP na pasta public:
 $ composer run dev
-Para executar unit testes:
+# Para executar unit testes:
 $ composer test # ou composer run test
 
-Para instalar as dependências, faça como a seguir.
+# Para instalar as dependências, faça como a seguir.
 $ composer install
 $ composer dump-autoload
+```
 
 # Arquivo de configuração de phpunit.
-Crie um arquivo na raiz do diretorio com nome phpunit.xml com o seguinte
+Crie um arquivo na raiz do diretorio com nome **phpunit.xml** com o seguinte
 conteudo:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -459,7 +475,7 @@ Entre outras coisas, o arquivo tambem referência o diretorio app no elemento
 <source>.
 
 # Criando o ponto de entrada do app.
-Crie o arquivo index.php na pasta public e escreve o seguinte.
+Crie o arquivo **index.php** na pasta public e escreve o seguinte.
 ```php
 <?php
 //public/index.php
@@ -474,6 +490,7 @@ $app = new Application();
 $app->init();
 
 ```
+
 Pronto. Pode salve-lo.
 Quando uma requisição chega, esse arquivo é o primero a ser executado, ou seja o
 ponto de entrada. Ele então cria uma classe e delega o processamento.
@@ -488,7 +505,8 @@ se voçê incluir um arquivo errado.
 
 
 # Criando a classe Application
-Crie um arquivo na pasta app com o nome Application.php e inclua nela o seguintes conteudo.
+Crie um arquivo na pasta app com o nome **Application.php** e inclua nela o seguintes conteudo.
+
 ```php
 <?php
 //app/Application.php
@@ -556,19 +574,20 @@ porque esse arquivo inclui a declaração 'namespace App', essa é a razão de e
 //caminho/para/nome-do-arquivo.php depois de <?php. Tambem a função declare()
 deve vir antes do namespace.
 
-No topo incluimos duas classes que ainda não existem. A primeira e
+- No topo incluimos duas classes que ainda não existem. A primeira e
 ListController que cuida do gerênciamento de quando criar uma lista ou uma tarefa,
 se é para exibir uma pagina em particular. A segunda é ListRepository que é usada por
 ListController para lidar com o banco de dados.
-A seguir tem a declaração switch($action)  que controla as rotas. Por exemplo:
-lists - exibe todas as listas no sistema.
-todo - exibe um lista com tarefas presente nessa lista.
-process-new-list - process criação de uma nova lista, no banco de dados.
-process-new-task - process criação de um nova tarefa em uma lista de tarefas.
-remove-task - excluir uma tarefa em uma lista de tarefas.
-remove-list - remove uma lista na tabela.
-task-done - marca uma tarefa como concluida na lista de terefas em questão.
-default: exibe pagina para criar uma nova lista.
+
+- A seguir tem a declaração switch($action)  que controla as rotas. Por exemplo:
+- lists - exibe todas as listas no sistema.
+- todo - exibe um lista com tarefas presente nessa lista.
+- process-new-list - process criação de uma nova lista, no banco de dados.
+- process-new-task - process criação de um nova tarefa em uma lista de tarefas.
+- remove-task - excluir uma tarefa em uma lista de tarefas.
+- remove-list - remove uma lista na tabela.
+- task-done - marca uma tarefa como concluida na lista de terefas em questão.
+- default: exibe pagina para criar uma nova lista.
 
 Quando uma requisição chega index.php usa Application para processar-la então
 Application recupera a variavel 'action' a partir de $_GET e analisar que decisão
@@ -577,7 +596,8 @@ tomar.
 
 
 # Criando a classe ListController.
-Crie um arquivo ListController.php na pasta app/controller com o seguinte conteudo.
+Crie um arquivo **ListController.php** na pasta app/controller com o seguinte conteudo.
+
 ```php
 <?php
 //app/controller/ListController.php
@@ -799,8 +819,8 @@ mapeada para App no arquivo composer.json.
 A seguir, incluimos a classe ListRepository que vamos criar em outra pasta.
 As variaveis globais dentro da classe são $templates e $listRepository
 
-a) displayNewListPage()
-A função displayNewListPage() tem a função de exibir a pagina para criar listas de
+
+- A função displayNewListPage() tem a função de exibir a pagina para criar listas de
 tarefas.
 A variavel $newListLink é para exibir o link ativo no cabeçalho da pagina, ou seja
 links de navegação.
@@ -819,8 +839,7 @@ o usuario pelo browser usando require_once, ou seja carregando o arquivo list.ph
     }
 
 
-b) processNewListData()
-A função processNewListData() tem a função de checar se o usuario forneceu um nome
+- A função processNewListData() tem a função de checar se o usuario forneceu um nome
 de lista valido, ou seja mais de 3 characteres. A seguir checamos se a lista com
 um nome igual já existe no banco de dados o que inviabiliza a criação da lista. Usamos
 a função findListByName() (encontre lista pelo nome) para esse proposito.
@@ -837,7 +856,7 @@ Quando o browser ver isso ela vaz uma requisição para o servidor com o endere�
 para classe Application, as variavel podem ser acessadas novamente em $_GET. Isso é usado geralmente
 em situações em que existe erros e que extras medidas precisão ser todas.
 
-
+```php
     function processNewListData()
     {
         $listName = $_POST['listName'] ?? '';
@@ -856,9 +875,9 @@ em situações em que existe erros e que extras medidas precisão ser todas.
 
         return;
     }
+```
 
-c) loadTasksPage()
-A função loadTasksPage() é uma função auxiliar, ou seja uma função para evitar duplicação
+- A função loadTasksPage() é uma função auxiliar, ou seja uma função para evitar duplicação
 de codigo. Ela serve para carregar a pagina onde podemos criar novas tarefas. Para isso é
 usado o arquivo tasks.php na pasta templates.
 
@@ -881,8 +900,8 @@ Finalmente carregamos a pagina com "require_once $path".
     }
 
 
-d) displayNewTasksPage()
-A função displayNewTasksPage() exibe uma lista, previamente criada, com um formulario abaixo para criar tarefas
+
+- A função displayNewTasksPage() exibe uma lista, previamente criada, com um formulario abaixo para criar tarefas
 A variavel $taskList como antes ajuda a inserir tarefas, já criadas, na pagina.
 O nome da lista é recuperada $_GET e checada para ver se é valida. Então os dados da lista é recuperas do
 banco de dados, usando o nome da lista e a função findListByName() de $listRepository. Os dados da
@@ -893,7 +912,7 @@ colocadas em $taskList array como antes e a mesma pagina é exibida usando a fun
 Por outro lado, se a lista, com nome em $listName, não for encontrada no banco de dados. redirecionamos
 para a pagina criar lista (header('Location: /').
 
-
+```php
     function displayNewTasksPage()
     {
         $taskList = [];
@@ -914,9 +933,9 @@ para a pagina criar lista (header('Location: /').
         $this->loadTasksPage($taskList, $listName);
     }
 
+```
 
-e) processNewTaskData()
-A função processNewTaskData() tem a função de processar a criação de novas tarefas, alem de checar se
+- A função processNewTaskData() tem a função de processar a criação de novas tarefas, alem de checar se
 o nome da tarefa é valida ou se ja existe uma terefa com mesmo nome no banco de dados.
 
 A descrição da variaveis são as seguintes:
@@ -938,7 +957,7 @@ colocamos uma mensagem de erro na array adequada.
 Carregamos tadas as tarefas com getTasks() com o ID da lista como argumento. então carregamos a pagina com
 com as tarefas anteriores e a nova tarefa criada usando loadTasksPage().
 
-
+```php
     function processNewTaskData()
     {
         $taskList = [];
@@ -975,9 +994,9 @@ com as tarefas anteriores e a nova tarefa criada usando loadTasksPage().
         $this->loadTasksPage($taskList, $listName, $errors);
     }
 
+```
 
-f) processRemoveTask()
-A função processRemoveTask() é responsavel por excluir tarefas do banco de dados.
+- A função processRemoveTask() é responsavel por excluir tarefas do banco de dados.
 Primeiro o ID da tarefa e o nome da lista são salvos nas variaveis $id, $listName, então
 nome da lista e o ID da terefa são testados com empty().
 
@@ -1021,8 +1040,7 @@ e mostramos a pagina sem a nova tarefa usando loadTasksPage().
     }
 
 
-g) processRemoveList()
-A função processRemoveList() exclui uma lista em vez. Ela age primeiro testando a variavel
+- A função processRemoveList() exclui uma lista em vez. Ela age primeiro testando a variavel
 $listName que contem o nome da lista, então remove a lista com deleteList() com nome da lista como argumento.
 Finalmente carregamos as listas restantes com header()
 
@@ -1041,8 +1059,7 @@ Finalmente carregamos as listas restantes com header()
         header("Location: /?action=lists");
     }
 
-h) processMarkTaskAsDone()
-Quando uma tarefa é concluida no mundo real, ela precisa ser marcada como tal, portanto precisamos de
+- Quando uma tarefa é concluida no mundo real, ela precisa ser marcada como tal, portanto precisamos de
 fornecer um jeito de marcar as tarefas criadas como concluidas, nesse caso escolhe mudar a cor para verde
 e passar uma linha atraves do texto, usando CSS, quando a tarefa é exibida na pagina e sinalizar para
 o banco de dados que que a tarefa foi concluida.
@@ -1101,8 +1118,7 @@ atualizados.
     }
 
 
-i) displayListsPage()
-A função displayListsPage() exibe todas as lista do sistema (banco de dados) para que quando a pagina carregar
+- A função displayListsPage() exibe todas as lista do sistema (banco de dados) para que quando a pagina carregar
 o usuario possa clicar numa lista de tarefas e editar tarefas (excluir, marcar com concluida, ...).
 A função primeiro configura a variavel $listsLink que muda a cor do link ativo na pagina,
 
@@ -1134,7 +1150,7 @@ Isso conclui a explicação da classe ListController, a seguir vamos ver ListRep
     }
 
 # criando a classe ListRepository
-Crie um arquivo com nome ListRepository.php na pasta app/repository com o seguinte conteudo.
+Crie um arquivo com nome **ListRepository.php** na pasta app/repository com o seguinte conteudo.
 ```php
 <?php
 // app/repository/ListRepository.php
@@ -1422,12 +1438,10 @@ htmlspecialchars().
     }
 
 
-b) printErrorMessage()
-A função printErrorMessage() simplesmente mostra um mensagem de error no browser, quando
+- A função printErrorMessage() simplesmente mostra um mensagem de error no browser, quando
 uma falha ocorre num processo para acessar o banco de dados.
 
-c) createList(string $name)
-O method createList() cria uma lista, ou uma entrada na tabela 'lists' com o nome
+- O method createList() cria uma lista, ou uma entrada na tabela 'lists' com o nome
 da lista em $name variavel.
 um comando ou declaração ou sql query é salva em $sql variavel para poder inserir a nova lista
 no banco de dados.
@@ -1452,7 +1466,7 @@ Do contrario uma nova entrada na tabela lists e criada.
         }
     }
 
-d) createTask(string $name, int $list_id)
+- createTask(string $name, int $list_id)
 O metodo createTask() é responsavel por criar um tarefa na tabela 'tasks' usando o nome
 da tarefa e o ID da lista que a tarefa pertençe.
 Um SQL query ou comando é salvo na variavel $sql com guardadores de lugar para nome da tarefa,
@@ -1479,7 +1493,7 @@ limpa.
     }
 
 
-e) findListByName(string $name)
+- findListByName(string $name)
 O metodo findListByName() é responsavel por achar uma lista, no banco de dados, por nome.
 Salvamos o comando para ser executado no banco de dados em $sql. Desta vez vamos pesquisar
 então o comando é SELECT, para achar o alvo, usamos WHERE name = : name (ONDE nome = :nome),
@@ -1517,7 +1531,7 @@ no banco de dados, retornamos false ou nulo na variavel $list.
     }
 
 
-f) getTasks()
+- getTasks()
 A função getTasks(), metodo na verdade, carrega toda a tabela de uma so vez em $tasks array.
 A declaração em $sql faz isso. Ela encontra todas as tarefas de uma lista, usando o id da lista
 e o nome da tabela na constante TASKS_TABLE.
@@ -1550,7 +1564,7 @@ uma array fazia sera retornada.
     }
 
 
-g) deleteTask()
+- deleteTask()
 O metodo deleteTask() deve ser chamada com o id da tarefa, $id, e o id da lista, $list_id para
 poder excluir um tarefa do banco de dados.
 O comando DELETE em $sql, mais o nome da tabela 'tasks' e o filtro, WHERE, são responsaveis por
@@ -1573,7 +1587,7 @@ o id da lista usando bindParam(), depois a operação é executada com execute()
     }
 
 
-h) deleteList()
+- deleteList()
 O metodo deleteList() remove listas do banco de dados usando seu nome, $listName, DELETE é
 usado como antes, assim como WHERE para filtrar a exclusão para apenas uma lista, se essa parte
 não for inserida, todas as entradas serão removidas.
@@ -1594,7 +1608,7 @@ erros são capturadas e exibidas.
     }
 
 
-i) findTaskById()
+- findTaskById()
 O metodo findTaskById() recebe o id de uma tarefa e pesquisa no banco de dados, usando SELECT
 e WHERE para filtrar a tarefa desejada, se ela existir!
 No bloco try inserimos o id da tarefa no comando e enviamos para MySQL com execute().
@@ -1618,7 +1632,7 @@ o metodo fetch() do objeto $stmt retorna uma array com os dados da tarefa, se um
         return $task;
     }
 
-l) updateTask(array $taskData)
+- updateTask(array $taskData)
 O metodo updateTask muda todas as colunas na tabela 'tasks' que casa com o id da tarefa em
 $taskData['id'], a unica exceção e a coluna id da tabela tasks, porque estamos atualizando, não criando
 uma nova entrada, alem do mais, a coluna id é automaticamente incrementada.
@@ -1644,7 +1658,7 @@ done=true.
         }
     }
 
-m) getLists()
+- getLists()
 O metodo getLists() é responsavel por carregar todas as listas, nomes, ids, etc.
 Usando SELECT * nome-da-tabela, os dados são armazenados em $lists array, o try bloco
 pega todas as listas de uma fez com o metodo fetchAll() do objeto $stmt. Se não hover erros
@@ -1666,7 +1680,7 @@ os dados serão retornados. Se hover uma mensagem de erro sera exibida.
         return $lists;
     }
 
-n) findNumberOfTasksPerList(int $list_id)
+- findNumberOfTasksPerList(int $list_id)
 O metodo findNumberOfTasksPerList() retorna o numero de tarefas na lista com o
 id igual a $list_id. Para tanto ela usa a função count() dentro do bloco try
 para armazenar o numero de tarefas em $count, que é retornada depois.
@@ -1694,7 +1708,7 @@ Se um error ocorre medidas adequadas são tomas em try ou catch blocos.
         return $count;
     }
 
-o) findTaskByName(string $taskName, int $list_id)
+- findTaskByName(string $taskName, int $list_id)
 A função findTaskByName() encontra tarefas pelo nome da tarefa e o id da lista. Para tanto
 usamos SELECT e WHERE para filtra as linhas (records) que queremos.
 AND e usado aqui para indicar que tanto o nome da tarefa (name coluna), quanto o id da lista (list_id)
@@ -1719,7 +1733,7 @@ executamos o comando com execute(). Depois salvamos o resultado em $task que é 
         return $task;
     }
 
-p) cleanUpTables()
+- cleanUpTables()
 O metodo cleanUpTables() remove todos os dados nas tabelas 'tasks' e 'lists' para prevenir que os testes
 com selenium, e phpunit falhem quando não deviam.
 Na verdade cleanUpTables() apenas remove os dados na tabela 'lists' MySQL remove os dados em 'tasks' porque
